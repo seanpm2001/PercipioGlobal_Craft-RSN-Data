@@ -1,0 +1,65 @@
+{# @var craft \craft\web\twig\variables\CraftVariable #}
+{#
+/**
+ * RSN Data plugin for Craft CMS 3.x
+ *
+ * RSN Data index.twig
+ *
+ * @author    Percipio
+ * @copyright Copyright (c) 2020 Percipio
+ * @link      https://percipio.london
+ * @package   RsnData
+ * @since     1.0.0
+ */
+#}
+{% extends "rsn-data/layouts/_cp" %}
+
+{% import "_includes/forms" as forms %}
+
+{% do view.registerAssetBundle("percipioglobal\\rsndata\\assetbundles\\rsndata\\RsnDataAsset") %}
+{% do view.registerAssetBundle("percipioglobal\\rsndata\\assetbundles\\indexcpsection\\IndexCPSectionAsset") %}
+
+
+{# The title of this CP section #}
+{% set title = "Dashboard"|t('rsn-data') %}
+{% set selectedNavItem = 'dashboard' %}
+
+{# any header buttons #}
+{% block actionButton %}
+    <div>
+        <button type="button" id="context-btn" class="btn menubtn sitemenubtn" data-icon="world" tabindex="0" role="combobox" aria-haspopup="true" aria-expanded="true">Bradford Research School</button>
+    </div>
+<div class="input ltr">
+    <div class="select js-select">
+        <select id="data-school-set" name="">
+            <option value="schools-all" selected>All Schools</option>
+            <option value="schools-priority">Priority Schools</option>
+        </select>
+    </div>
+</div>
+<div class="input ltr">
+    <div class="select js-select">
+        <select id="data-time-set" name="Time Period">
+            <optgroup label="Time">
+                <option value="12-months" selected>Last 12 months</option>
+                <option value="3-months">Last 3 months</option>
+            </optgroup>
+            <optgroup label="School Year">
+                <option value="2018">2018 - 19 school year</option>
+                <option value="2019">2019 - 20 school year</option>
+                <option value="2020">2020 - 21 school year</option>
+            </optgroup>
+        </select>
+    </div>
+</div>
+{% endblock %}
+
+{% set content %}
+    <h2>{{ title }}</h2>
+    <p>Cumulative engagement totals over time period: <b data-time-set>last 12 months</b>.</p>
+    <canvas id="chart-totals" class="chart-js" height="48"></canvas>
+
+
+    <p>Engagement data showing <b data-school-set>all schools</b> over time period: <b data-time-set>last 12 months</b>.</p>
+    <canvas id="chart-line" class="chart-js"></canvas>
+{% endset %}

@@ -1,0 +1,26 @@
+{# @var craft \craft\web\twig\variables\CraftVariable #}
+{#
+/**
+ * RSN Data plugin for Craft CMS 3.x
+ *
+ * RSN Data Settings.twig
+ *
+ * @author    Percipio
+ * @copyright Copyright (c) 2020 Percipio
+ * @link      https://percipio.london
+ * @package   RsnData
+ * @since     1.0.0
+ */
+#}
+
+{% import "_includes/forms" as forms %}
+
+{% do view.registerAssetBundle("percipioglobal\\rsndata\\assetbundles\\rsndata\\RsnDataAsset") %}
+
+{{ forms.textField({
+    label: 'Google Maps API key',
+    instructions: 'Add the full API key registered with Google: https://console.cloud.google.com/apis/credentials/key/',
+    id: 'googleApiKey',
+    name: 'googleApiKey',
+    value: settings['googleApiKey']})
+}}

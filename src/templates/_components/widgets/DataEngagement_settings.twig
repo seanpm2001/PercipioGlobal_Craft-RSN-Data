@@ -1,0 +1,26 @@
+{# @var craft \craft\web\twig\variables\CraftVariable #}
+{#
+/**
+ * RSN Data plugin for Craft CMS
+ *
+ * DataEngagement Widget Settings
+ *
+ * @author    Percipio
+ * @copyright Copyright (c) 2020 Percipio
+ * @link      https://percipio.london
+ * @package   RsnData
+ * @since     1.0.0
+ */
+#}
+
+{% import "_includes/forms" as forms %}
+
+{% do view.registerAssetBundle("percipioglobal\\rsndata\\assetbundles\\rsndata\\RsnDataAsset") %}
+
+{{ forms.textField({
+    label: 'Message',
+    instructions: 'Enter a message here.',
+    id: 'message',
+    name: 'message',
+    value: widget['message']})
+}}

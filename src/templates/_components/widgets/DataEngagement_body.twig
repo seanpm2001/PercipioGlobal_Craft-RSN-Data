@@ -1,0 +1,20 @@
+{# @var craft \craft\web\twig\variables\CraftVariable #}
+{#
+/**
+ * RSN Data plugin for Craft CMS
+ *
+ * DataEngagement Widget Body
+ *
+ * @author    Percipio
+ * @copyright Copyright (c) 2020 Percipio
+ * @link      https://percipio.london
+ * @package   RsnData
+ * @since     1.0.0
+ */
+#}
+
+{% set iconUrl = view.getAssetManager().getPublishedUrl('@percipioglobal/rsndata/assetbundles/dataengagementwidget/dist', true) ~ '/img/DataEngagement-icon.svg' %}
+
+<img src="{{ iconUrl }}" height="64" width="64" />
+
+<p>{{ message }}</p>

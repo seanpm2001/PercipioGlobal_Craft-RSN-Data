@@ -1,0 +1,25 @@
+{% extends "_layouts/cp" %}
+{% import "_includes/forms" as forms %}
+
+{# Link for the ? icon at the bottom of the page #}
+{% set docsUrl = "???" %}
+
+{# The URL to this plugin's base CP section #}
+{% set pluginCpUrl = url('rsn-data/') %}
+
+{# Breadcrumbs #}
+{% set crumbs = [
+    { label: "Rsn Data Engagement" , url: pluginCpUrl },
+    { label: title, url: pluginCpUrl },
+] %}
+
+{% set navItems = {
+    dashboard: { label: "Dashboard"|t('rsnData'), url: pluginCpUrl },
+    trainings: { label: "Trainings"|t('rsnData'), url: url('rsn-data/trainings') },
+    schools: { label: "Schools"|t('rsnData'), url: url('rsn-data/schools') },
+    export: { label: "Export"|t('rsnData'), url: url('rsn-data/export') },
+} %}
+
+{% block sidebar %}
+    {% include "_includes/nav" with { items: navItems, selectedItem: selectedNavItem } only %}
+{% endblock %}

@@ -1,0 +1,766 @@
+{# @var craft \craft\web\twig\variables\CraftVariable #}
+{#
+/**
+ * RSN Data plugin for Craft CMS 3.x
+ *
+ * RSN Data index.twig
+ *
+ * @author    Percipio
+ * @copyright Copyright (c) 2020 Percipio
+ * @link      https://percipio.london
+ * @package   RsnData
+ * @since     1.0.0
+ */
+#}
+{% extends "rsn-data/layouts/_cp" %}
+
+{% import "_includes/forms" as forms %}
+
+{% do view.registerAssetBundle("percipioglobal\\rsndata\\assetbundles\\rsndata\\RsnDataAsset") %}
+{% do view.registerAssetBundle("percipioglobal\\rsndata\\assetbundles\\indexcpsection\\IndexCPSectionAsset") %}
+
+
+{# The title of this CP section #}
+{% set title = "Trainings"|t('rsn-data') %}
+{% set selectedNavItem = 'trainings' %}
+
+{# any header buttons #}
+{% block actionButton %}
+         <div>
+        <button type="button" id="context-btn" class="btn menubtn sitemenubtn" data-icon="world" tabindex="0" role="combobox" aria-owns="menu.Garnish54175006" aria-haspopup="true" aria-expanded="true">Bradford Research School</button>
+    </div>
+{% endblock %}
+
+{% set content %}
+    <div class="tableview tablepane">
+   <table class="data fullwidth">
+    <thead>
+        <tr>
+            <th class="checkbox-cell selectallcontainer orderable" role="checkbox" tabindex="0" aria-checked="false">
+                <div class="checkbox"></div>
+            </th>
+            <th scope="col" data-attribute="title" class="ordered desc" style="width:35%">Training</th>
+            <th scope="col" data-attribute="uri" class="orderable">Type</th>
+            <th scope="col" data-attribute="link" class="orderable">Start Date</th>
+            <th scope="col" data-attribute="field:40" class="orderable">Attendees</th>
+            <th scope="col" data-attribute="dateUpdated" class="orderable">Engagement</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr data-id="453611" tabindex="0">
+            <td class="checkbox-cell">
+                <div class="checkbox" title="Select"></div>
+            </td>
+            <th data-title="Title" data-titlecell="">
+                <div class="element small hasstatus" data-type="craft\elements\Entry" data-id="453611" data-site-id="6" data-status="disabled" data-label="OA Implementation Training" data-url="https://researchschool.org.uk/bradford/event/oa-implementation-training/"
+                data-level="" title="OA Implementation Training – Bradford Research School" data-editable=""><span class="status disabled"></span>
+                    <div class="label"><span class="title"><a href="https://researchschool.org.uk/admin/entries/event/453611-oa-implementation-training?site=bradford">OA Implementation Training</a></span></div>
+                </div>
+            </th>
+            <td data-titleTypei  <span>Twilight / Briefing</span></td>
+            <td data-title="URI" data-attr="uri">  <span>13/11/2020, 15:00</span></td>
+            <td data-title="Event Categories">
+                <span>35</span>
+            </td>
+             <td>
+                  <div class="progress">
+                     <div class="meter bg-red" title="Engaged 60%">
+                         <span style="width: 60%"></span>
+                     </div>
+                     <div class="meter bg-orange" title="Sustained 28%">
+                         <span style="width: 28%"></span>
+                     </div>
+                     <div class="meter bg-blue" title="Embedded 12%">
+                         <span style="width: 12%"></span>
+                     </div>
+                 </div>
+             </td>
+        </tr>
+        <tr data-id="413908">
+            <td class="checkbox-cell">
+                <div class="checkbox" title="Select"></div>
+            </td>
+            <th data-title="Title" data-titlecell="">
+                <div class="element small hasstatus" data-type="craft\elements\Entry" data-id="413908" data-site-id="6" data-status="disabled" data-label="Delta School Improvement Partnership" data-url="https://researchschool.org.uk/bradford/event/delta-partnership-training/"
+                data-level="" title="Delta School Improvement Partnership – Bradford Research School" data-editable=""><span class="status disabled"></span>
+                    <div class="label"><span class="title"><a href="https://researchschool.org.uk/admin/entries/event/413908-delta-partnership-training?site=bradford">Delta School Improvement Partnership</a></span></div>
+                </div>
+            </th>
+            <td data-titleTypei  <span>Multi-Day Training</span></td>
+            <td data-title="URI" data-attr="uri"><span>5/11/2020, 13:00</span></td>
+            <td data-title="Event Categories">
+                <span>56</span>
+            </td>
+            <td><div class="progress">
+             <div class="progress">
+                     <div class="meter bg-red" title="Engaged 90%">
+                         <span style="width: 90%"></span>
+                     </div>
+                     <div class="meter bg-orange" title="Sustained 8%">
+                         <span style="width: 8%"></span>
+                     </div>
+                     <div class="meter bg-blue" title="Embedded 2%">
+                         <span style="width: 2%"></span>
+                     </div>
+                 </div></td>
+        </tr>
+        <tr data-id="461886">
+            <td class="checkbox-cell">
+                <div class="checkbox" title="Select"></div>
+            </td>
+            <th data-title="Title" data-titlecell="">
+                <div class="element small hasstatus" data-type="craft\elements\Entry" data-id="461886" data-site-id="6" data-status="disabled" data-label="Maximising Memory and the Science of Learning" data-url="https://researchschool.org.uk/bradford/event/maximising-memory-and-the-science-of-learning/"
+                data-level="" title="Maximising Memory and the Science of Learning – Bradford Research School" data-editable=""><span class="status disabled"></span>
+                    <div class="label"><span class="title"><a href="https://researchschool.org.uk/admin/entries/event/461886-maximising-memory-and-the-science-of-learning?site=bradford">Maximising Memory and the Science of Learning</a></span></div>
+                </div>
+            </th>
+           <td data-title=Type><span>Multi-Day Training</span></td>
+            <td data-title="URI" data-attr="uri"><span>04/02/2021, 15:00</span></td>
+            <td data-title="Event Categories">
+                <span>25</span>
+            </td>
+            <td>                     <div class="meter bg-red">
+             <div class="progress">
+                     <div class="meter bg-red" title="Engaged 0%">
+                         <span style="width: 0%"></span>
+                     </div>
+                     <div class="meter bg-orange" title="Sustained 0%">
+                         <span style="width: 0%"></span>
+                     </div>
+                     <div class="meter bg-blue" title="Embedded 0%">
+                         <span style="width: 0%"></span>
+                     </div>
+                 </div></td>
+        </tr>
+        <tr data-id="462092">
+            <td class="checkbox-cell">
+                <div class="checkbox" title="Select"></div>
+            </td>
+            <th data-title="Title" data-titlecell="">
+                <div class="element small hasstatus" data-type="craft\elements\Entry" data-id="462092" data-site-id="6" data-status="disabled" data-label="Making the Difference for Disadvantaged Pupils in Areas of Deprivation" data-url="https://researchschool.org.uk/bradford/event/making-the-difference-for-disadvantaged-pupils-in-areas-of-deprivation/"
+                data-level="" title="Making the Difference for Disadvantaged Pupils in Areas of Deprivation – Bradford Research School" data-editable=""><span class="status disabled"></span>
+                    <div class="label"><span class="title"><a href="https://researchschool.org.uk/admin/entries/event/462092-making-the-difference-for-disadvantaged-pupils-in-areas-of-deprivation?site=bradford">Making the Difference for Disadvantaged Pupils in Areas of Deprivation</a></span></div>
+                </div>
+            </th>
+            <td data-titleTypei  <span>Twilight / Briefing</span></td>
+            <td data-title="URI" data-attr="uri">  <span>13/12/2020, 15:00</span></td>
+            <td data-title="Event Categories">
+                <span>35</span>
+            </td>
+            <td>                         <span style="width: 60%"></span>
+             <div class="progress">
+                     <div class="meter bg-red" title="Engaged 60%">
+                         <span style="width: 60%"></span>
+                     </div>
+                     <div class="meter bg-orange" title="Sustained 28%">
+                         <span style="width: 28%"></span>
+                     </div>
+                     <div class="meter bg-blue" title="Embedded 12%">
+                         <span style="width: 12%"></span>
+                     </div>
+                 </div></td>
+        </tr>
+        <tr data-id="411667">
+            <td class="checkbox-cell">
+                <div class="checkbox" title="Select"></div>
+            </td>
+            <th data-title="Title" data-titlecell="">
+                <div class="element small hasstatus" data-type="craft\elements\Entry" data-id="411667" data-site-id="6" data-status="disabled" data-label="Spotlight session-Remote Lessons" data-url="https://researchschool.org.uk/bradford/event/spotlight-session/"
+                data-level="" title="Spotlight session-Remote Lessons – Bradford Research School" data-editable=""><span class="status disabled"></span>
+                    <div class="label"><span class="title"><a href="https://researchschool.org.uk/admin/entries/event/411667-spotlight-session?site=bradford">Spotlight session-Remote Lessons</a></span></div>
+                </div>
+            </th>
+            <td data-titleTypei  <span>Twilight / Briefing</span></td>
+            <td data-title="URI" data-attr="uri">  <span>13/12/2020, 15:00</span></td>
+            <td data-title="Event Categories">
+                <span>35</span>
+            </td>
+            <td>                     </div>
+     <div class="progress">
+                     <div class="meter bg-red" title="Engaged 60%">
+                         <span style="width: 60%"></span>
+                     </div>
+                     <div class="meter bg-orange" title="Sustained 28%">
+                         <span style="width: 28%"></span>
+                     </div>
+                     <div class="meter bg-blue" title="Embedded 12%">
+                         <span style="width: 12%"></span>
+                     </div>
+                 </div></td>
+        </tr>
+        <tr data-id="453443">
+            <td class="checkbox-cell">
+                <div class="checkbox" title="Select"></div>
+            </td>
+            <th data-title="Title" data-titlecell="">
+                <div class="element small hasstatus" data-type="craft\elements\Entry" data-id="453443" data-site-id="6" data-status="disabled" data-label="Leading Learning" data-url="https://researchschool.org.uk/bradford/event/legacy-leading-learning/" data-level=""
+                title="Leading Learning – Bradford Research School" data-editable=""><span class="status disabled"></span>
+                    <div class="label"><span class="title"><a href="https://researchschool.org.uk/admin/entries/event/453443-legacy-leading-learning?site=bradford">Leading Learning</a></span></div>
+                </div>
+            </th>
+           <td data-title=Type><span>Twilight / Briefing</span></td>
+            <td data-title="URI" data-attr="uri">  <span>13/12/2020, 15:00</span></td>
+            <td data-title="Event Categories">
+                <span>35</span>
+            </td>
+            <td>                     <div class="meter bg-orange">
+             <div class="progress">
+                     <div class="meter bg-red" title="Engaged 60%">
+                         <span style="width: 60%"></span>
+                     </div>
+                     <div class="meter bg-orange" title="Sustained 28%">
+                         <span style="width: 28%"></span>
+                     </div>
+                     <div class="meter bg-blue" title="Embedded 12%">
+                         <span style="width: 12%"></span>
+                     </div>
+                 </div></td>
+        </tr>
+        <tr data-id="453459">
+            <td class="checkbox-cell">
+                <div class="checkbox" title="Select"></div>
+            </td>
+            <th data-title="Title" data-titlecell="">
+                <div class="element small hasstatus" data-type="craft\elements\Entry" data-id="453459" data-site-id="6" data-status="disabled" data-label="Primary Memory" data-url="https://researchschool.org.uk/bradford/event/primary-memory/" data-level=""
+                title="Primary Memory – Bradford Research School" data-editable=""><span class="status disabled"></span>
+                    <div class="label"><span class="title"><a href="https://researchschool.org.uk/admin/entries/event/453459-primary-memory?site=bradford">Primary Memory</a></span></div>
+                </div>
+            </th>
+           <td data-title=Type><span>Twilight / Briefing</span></td>
+            <td data-title="URI" data-attr="uri">  <span>13/12/2020, 15:00</span></td>
+            <td data-title="Event Categories">
+                <span>35</span>
+            </td>
+            <td>                         <span style="width: 28%"></span>
+             <div class="progress">
+                     <div class="meter bg-red" title="Engaged 60%">
+                         <span style="width: 60%"></span>
+                     </div>
+                     <div class="meter bg-orange" title="Sustained 28%">
+                         <span style="width: 28%"></span>
+                     </div>
+                     <div class="meter bg-blue" title="Embedded 12%">
+                         <span style="width: 12%"></span>
+                     </div>
+                 </div></td>
+        </tr>
+        <tr data-id="453475">
+            <td class="checkbox-cell">
+                <div class="checkbox" title="Select"></div>
+            </td>
+            <th data-title="Title" data-titlecell="">
+                <div class="element small hasstatus" data-type="craft\elements\Entry" data-id="453475" data-site-id="6" data-status="disabled" data-label="Metacognition" data-url="https://researchschool.org.uk/bradford/event/metacognition/" data-level=""
+                title="Metacognition – Bradford Research School" data-editable=""><span class="status disabled"></span>
+                    <div class="label"><span class="title"><a href="https://researchschool.org.uk/admin/entries/event/453475-metacognition?site=bradford">Metacognition</a></span></div>
+                </div>
+            </th>
+            <td data-titleTypei  <span>Twilight / Briefing</span></td>
+            <td data-title="URI" data-attr="uri">  <span>13/12/2020, 15:00</span></td>
+            <td data-title="Event Categories">
+                <span>35</span>
+            </td>
+            <td>                     </div>
+             <div class="progress">
+                     <div class="meter bg-red" title="Engaged 60%">
+                         <span style="width: 60%"></span>
+                     </div>
+                     <div class="meter bg-orange" title="Sustained 28%">
+                         <span style="width: 28%"></span>
+                     </div>
+                     <div class="meter bg-blue" title="Embedded 12%">
+                         <span style="width: 12%"></span>
+                     </div>
+                 </div></td>
+        </tr>
+        <tr data-id="453488">
+            <td class="checkbox-cell">
+                <div class="checkbox" title="Select"></div>
+            </td>
+            <th data-title="Title" data-titlecell="">
+                <div class="element small hasstatus" data-type="craft\elements\Entry" data-id="453488" data-site-id="6" data-status="disabled" data-label="Bradford Research Champions" data-url="https://researchschool.org.uk/bradford/event/bradford-research-champions/"
+                data-level="" title="Bradford Research Champions – Bradford Research School" data-editable=""><span class="status disabled"></span>
+                    <div class="label"><span class="title"><a href="https://researchschool.org.uk/admin/entries/event/453488-bradford-research-champions?site=bradford">Bradford Research Champions</a></span></div>
+                </div>
+            </th>
+          <td data-title="Type"><span>Twilight / Briefing</span></td>
+            <td data-title="URI" data-attr="uri"> <span>13/12/2020, 15:00</span></td>
+            <td data-title="Event Categories">
+                <span>35</span>
+            </td>
+            <td>                     <div class="meter bg-blue">
+             <div class="progress">
+                     <div class="meter bg-red" title="Engaged 60%">
+                         <span style="width: 60%"></span>
+                     </div>
+                     <div class="meter bg-orange" title="Sustained 28%">
+                         <span style="width: 28%"></span>
+                     </div>
+                     <div class="meter bg-blue" title="Embedded 12%">
+                         <span style="width: 12%"></span>
+                     </div>
+                 </div></td>
+        </tr>
+        <tr data-id="453627">
+            <td class="checkbox-cell">
+                <div class="checkbox" title="Select"></div>
+            </td>
+            <th data-title="Title" data-titlecell="">
+                <div class="element small hasstatus" data-type="craft\elements\Entry" data-id="453627" data-site-id="6" data-status="disabled" data-label="Spotlight sessions - Effective strategies for recorded lessons" data-url="https://researchschool.org.uk/bradford/event/spotlight-sessions-recording/"
+                data-level="" title="Spotlight sessions - Effective strategies for recorded lessons – Bradford Research School" data-editable=""><span class="status disabled"></span>
+                    <div class="label"><span class="title"><a href="https://researchschool.org.uk/admin/entries/event/453627-spotlight-sessions-recording?site=bradford">Spotlight sessions - Effective strategies for recorded lessons</a></span></div>
+                </div>
+            </th>
+            <td data-titleTypei  <span>Twilight / Briefing</span></td>
+            <td data-title="URI" data-attr="uri">  <span>13/12/2020, 15:00</span></td>
+            <td data-title="Event Categories">
+                <span>35</span>
+            </td>
+            <td>                         <span style="width: 12%"></span>
+             <div class="progress">
+                     <div class="meter bg-red" title="Engaged 60%">
+                         <span style="width: 60%"></span>
+                     </div>
+                     <div class="meter bg-orange" title="Sustained 28%">
+                         <span style="width: 28%"></span>
+                     </div>
+                     <div class="meter bg-blue" title="Embedded 12%">
+                         <span style="width: 12%"></span>
+                     </div>
+                 </div></td>
+        </tr>
+        <tr data-id="413932">
+            <td class="checkbox-cell">
+                <div class="checkbox" title="Select"></div>
+            </td>
+            <th data-title="Title" data-titlecell="">
+                <div class="element small hasstatus" data-type="craft\elements\Entry" data-id="413932" data-site-id="6" data-status="disabled" data-label="Bowling Park training" data-url="https://researchschool.org.uk/bradford/event/bowling-park-training/"
+                data-level="" title="Bowling Park training – Bradford Research School" data-editable=""><span class="status disabled"></span>
+                    <div class="label"><span class="title"><a href="https://researchschool.org.uk/admin/entries/event/413932-bowling-park-training?site=bradford">Bowling Park training</a></span></div>
+                </div>
+            </th>
+            <td data-titleTypei  <span>Twilight / Briefing</span></td>
+            <td data-title="URI" data-attr="uri">  <span>13/12/2020, 15:00</span></td>
+            <td data-title="Event Categories">
+                <span>35</span>
+            </td>
+            <td>                     </div>
+             <div class="progress">
+                     <div class="meter bg-red" title="Engaged 60%">
+                         <span style="width: 60%"></span>
+                     </div>
+                     <div class="meter bg-orange" title="Sustained 28%">
+                         <span style="width: 28%"></span>
+                     </div>
+                     <div class="meter bg-blue" title="Embedded 12%">
+                         <span style="width: 12%"></span>
+                     </div>
+                 </div></td>
+        </tr>
+        <tr data-id="399617">
+            <td class="checkbox-cell">
+                <div class="checkbox" title="Select"></div>
+            </td>
+            <th data-title="Title" data-titlecell="">
+                <div class="element small hasstatus" data-type="craft\elements\Entry" data-id="399617" data-site-id="6" data-status="disabled" data-label="Long Term Learning" data-url="https://researchschool.org.uk/bradford/event/powerful-knowledge/" data-level=""
+                title="Long Term Learning – Bradford Research School" data-editable=""><span class="status disabled"></span>
+                    <div class="label"><span class="title"><a href="https://researchschool.org.uk/admin/entries/event/399617-powerful-knowledge?site=bradford">Long Term Learning</a></span></div>
+                </div>
+            </th>
+            <td data-titleTypei  <span>Twilight / Briefing</span></td>
+            <td data-title="URI" data-attr="uri">  <span>13/12/2020, 15:00</span></td>
+            <td data-title="Event Categories">
+                <span>35</span>
+            </td>
+            <td>                 </div>
+             <div class="progress">
+                     <div class="meter bg-red" title="Engaged 60%">
+                         <span style="width: 60%"></span>
+                     </div>
+                     <div class="meter bg-orange" title="Sustained 28%">
+                         <span style="width: 28%"></span>
+                     </div>
+                     <div class="meter bg-blue" title="Embedded 12%">
+                         <span style="width: 12%"></span>
+                     </div>
+                 </div></td>
+        </tr>
+        <tr data-id="10093">
+            <td class="checkbox-cell">
+                <div class="checkbox" title="Select"></div>
+            </td>
+            <th data-title="Title" data-titlecell="">
+                <div class="element small hasstatus" data-type="craft\elements\Entry" data-id="10093" data-site-id="6" data-status="disabled" data-label="Research Roadshow- Improving Behavior in Schools" data-url="https://researchschool.org.uk/bradford/event/research-roadshow-improving-behaviour-in-schools/"
+                data-level="" title="Research Roadshow- Improving Behavior in Schools – Bradford Research School" data-editable=""><span class="status disabled"></span>
+                    <div class="label"><span class="title"><a href="https://researchschool.org.uk/admin/entries/event/10093-research-roadshow-improving-behaviour-in-schools?site=bradford">Research Roadshow- Improving Behavior in Schools</a></span></div>
+                </div>
+            </th>
+            <td data-titleTypei  <span>Twilight / Briefing</span></td>
+            <td data-title="URI" data-attr="uri">  <span>13/12/2020, 15:00</span></td>
+            <td data-title="Event Categories">
+                <span>35</span>
+            </td>
+            <td>
+                 <div class="progress">
+                     <div class="meter bg-red" title="Engaged 60%">
+                         <span style="width: 60%"></span>
+                     </div>
+                     <div class="meter bg-orange" title="Sustained 28%">
+                         <span style="width: 28%"></span>
+                     </div>
+                     <div class="meter bg-blue" title="Embedded 12%">
+                         <span style="width: 12%"></span>
+                     </div>
+                 </div>
+            </td>
+        </tr>
+        <tr data-id="407221">
+            <td class="checkbox-cell">
+                <div class="checkbox" title="Select"></div>
+            </td>
+            <th data-title="Title" data-titlecell="">
+                <div class="element small hasstatus" data-type="craft\elements\Entry" data-id="407221" data-site-id="6" data-status="disabled" data-label="2019-2020 Bradford Engagement" data-url="https://researchschool.org.uk/bradford/event/2019-2020-bradford-engagement/"
+                data-level="" title="2019-2020 Bradford Engagement – Bradford Research School" data-editable=""><span class="status disabled"></span>
+                    <div class="label"><span class="title"><a href="https://researchschool.org.uk/admin/entries/event/407221-2019-2020-bradford-engagement?site=bradford">2019-2020 Bradford Engagement</a></span></div>
+                </div>
+            </th>
+            <td data-titleTypei  <span>Twilight / Briefing</span></td>
+            <td data-title="URI" data-attr="uri">  <span>13/12/2020, 15:00</span></td>
+            <td data-title="Event Categories">
+                <span>35</span>
+            </td>
+            <td>
+                 <div class="progress">
+                     <div class="meter bg-red" title="Engaged 60%">
+                         <span style="width: 60%"></span>
+                     </div>
+                     <div class="meter bg-orange" title="Sustained 28%">
+                         <span style="width: 28%"></span>
+                     </div>
+                     <div class="meter bg-blue" title="Embedded 12%">
+                         <span style="width: 12%"></span>
+                     </div>
+                 </div>
+            </td>
+        </tr>
+        <tr data-id="136277">
+            <td class="checkbox-cell">
+                <div class="checkbox" title="Select"></div>
+            </td>
+            <th data-title="Title" data-titlecell="">
+                <div class="element small hasstatus" data-type="craft\elements\Entry" data-id="136277" data-site-id="6" data-status="live" data-label="Improving Literacy in Secondary Schools - with Alex Quigley" data-url="https://researchschool.org.uk/bradford/event/improving-literacy-in-secondary-schools-with-alex-quigley/"
+                data-level="" title="Improving Literacy in Secondary Schools - with Alex Quigley – Bradford Research School" data-editable=""><span class="status live"></span>
+                    <div class="label"><span class="title"><a href="https://researchschool.org.uk/admin/entries/event/136277-improving-literacy-in-secondary-schools-with-alex-quigley?site=bradford">Improving Literacy in Secondary Schools - with Alex Quigley</a></span></div>
+                </div>
+            </th>
+           <td data-title=Type><span>Twilight / Briefing</span></td>
+            <td data-title="URI" data-attr="uri">  <span>13/12/2020, 15:00</span></td>
+            <td data-title="Event Categories">
+                <span>35</span>
+            </td>
+            <td>
+                 <div class="progress">
+                     <div class="meter bg-red" title="Engaged 60%">
+                         <span style="width: 60%"></span>
+                     </div>
+                     <div class="meter bg-orange" title="Sustained 28%">
+                         <span style="width: 28%"></span>
+                     </div>
+                     <div class="meter bg-blue" title="Embedded 12%">
+                         <span style="width: 12%"></span>
+                     </div>
+                 </div>
+            </td>
+        </tr>
+        <tr data-id="387762">
+            <td class="checkbox-cell">
+                <div class="checkbox" title="Select"></div>
+            </td>
+            <th data-title="Title" data-titlecell="">
+                <div class="element small hasstatus" data-type="craft\elements\Entry" data-id="387762" data-site-id="6" data-status="disabled" data-label="Bradford Birth-19 Primary Metacognition Training" data-url="https://researchschool.org.uk/bradford/event/bradford-birth-19-primary-metacognition-training-1/"
+                data-level="" title="Bradford Birth-19 Primary Metacognition Training – Bradford Research School" data-editable=""><span class="status disabled"></span>
+                    <div class="label"><span class="title"><a href="https://researchschool.org.uk/admin/entries/event/387762-bradford-birth-19-primary-metacognition-training-1?site=bradford">Bradford Birth-19 Primary Metacognition Training</a></span></div>
+                </div>
+            </th>
+           <td data-title=Type><span>Twilight / Briefing</span></td>
+            <td data-title="URI" data-attr="uri">  <span>13/12/2020, 15:00</span></td>
+            <td data-title="Event Categories">
+                <span>35</span>
+            </td>
+            <td>
+                 <div class="progress">
+                     <div class="meter bg-red" title="Engaged 60%">
+                         <span style="width: 60%"></span>
+                     </div>
+                     <div class="meter bg-orange" title="Sustained 28%">
+                         <span style="width: 28%"></span>
+                     </div>
+                     <div class="meter bg-blue" title="Embedded 12%">
+                         <span style="width: 12%"></span>
+                     </div>
+                 </div>
+            </td>
+        </tr>
+        <tr data-id="387811">
+            <td class="checkbox-cell">
+                <div class="checkbox" title="Select"></div>
+            </td>
+            <th data-title="Title" data-titlecell="">
+                <div class="element small hasstatus" data-type="craft\elements\Entry" data-id="387811" data-site-id="6" data-status="disabled" data-label="Bradford Birth-19 Primary Metacognition Training" data-url="https://researchschool.org.uk/bradford/event/bradford-birth-19-primary-metacognition-training-3/"
+                data-level="" title="Bradford Birth-19 Primary Metacognition Training – Bradford Research School" data-editable=""><span class="status disabled"></span>
+                    <div class="label"><span class="title"><a href="https://researchschool.org.uk/admin/entries/event/387811-bradford-birth-19-primary-metacognition-training-3?site=bradford">Bradford Birth-19 Primary Metacognition Training</a></span></div>
+                </div>
+            </th>
+           <td data-title=Type><span>Twilight / Briefing</span></td>
+            <td data-title="URI" data-attr="uri">  <span>13/12/2020, 15:00</span></td>
+            <td data-title="Event Categories">
+                <span>35</span>
+            </td>
+            <td>
+                 <div class="progress">
+                     <div class="meter bg-red" title="Engaged 60%">
+                         <span style="width: 60%"></span>
+                     </div>
+                     <div class="meter bg-orange" title="Sustained 28%">
+                         <span style="width: 28%"></span>
+                     </div>
+                     <div class="meter bg-blue" title="Embedded 12%">
+                         <span style="width: 12%"></span>
+                     </div>
+                 </div>
+            </td>
+        </tr>
+        <tr data-id="387787">
+            <td class="checkbox-cell">
+                <div class="checkbox" title="Select"></div>
+            </td>
+            <th data-title="Title" data-titlecell="">
+                <div class="element small hasstatus" data-type="craft\elements\Entry" data-id="387787" data-site-id="6" data-status="disabled" data-label="Bradford Birth-19 Primary Metacognition Training" data-url="https://researchschool.org.uk/bradford/event/bradford-birth-19-primary-metacognition-training-2/"
+                data-level="" title="Bradford Birth-19 Primary Metacognition Training – Bradford Research School" data-editable=""><span class="status disabled"></span>
+                    <div class="label"><span class="title"><a href="https://researchschool.org.uk/admin/entries/event/387787-bradford-birth-19-primary-metacognition-training-2?site=bradford">Bradford Birth-19 Primary Metacognition Training</a></span></div>
+                </div>
+            </th>
+            <td data-titleTypei  <span>Twilight / Briefing</span></td>
+            <td data-title="URI" data-attr="uri">  <span>13/12/2020, 15:00</span></td>
+            <td data-title="Event Categories">
+                <span>35</span>
+            </td>
+            <td>
+                 <div class="progress">
+                     <div class="meter bg-red" title="Engaged 60%">
+                         <span style="width: 60%"></span>
+                     </div>
+                     <div class="meter bg-orange" title="Sustained 28%">
+                         <span style="width: 28%"></span>
+                     </div>
+                     <div class="meter bg-blue" title="Embedded 12%">
+                         <span style="width: 12%"></span>
+                     </div>
+                 </div>
+            </td>
+        </tr>
+        <tr data-id="387687">
+            <td class="checkbox-cell">
+                <div class="checkbox" title="Select"></div>
+            </td>
+            <th data-title="Title" data-titlecell="">
+                <div class="element small hasstatus" data-type="craft\elements\Entry" data-id="387687" data-site-id="6" data-status="disabled" data-label="Bradford Birth-19 Primary Metacognition Training" data-url="https://researchschool.org.uk/bradford/event/bradford-birth-19-primary-metacognition-training/"
+                data-level="" title="Bradford Birth-19 Primary Metacognition Training – Bradford Research School" data-editable=""><span class="status disabled"></span>
+                    <div class="label"><span class="title"><a href="https://researchschool.org.uk/admin/entries/event/387687-bradford-birth-19-primary-metacognition-training?site=bradford">Bradford Birth-19 Primary Metacognition Training</a></span></div>
+                </div>
+            </th>
+           <td data-title=Type><span>Twilight / Briefing</span></td>
+            <td data-title="URI" data-attr="uri">  <span>13/12/2020, 15:00</span></td>
+            <td data-title="Event Categories">
+                <span>35</span>
+            </td>
+            <td>
+                 <div class="progress">
+                     <div class="meter bg-red" title="Engaged 60%">
+                         <span style="width: 60%"></span>
+                     </div>
+                     <div class="meter bg-orange" title="Sustained 28%">
+                         <span style="width: 28%"></span>
+                     </div>
+                     <div class="meter bg-blue" title="Embedded 12%">
+                         <span style="width: 12%"></span>
+                     </div>
+                 </div>
+            </td>
+        </tr>
+        <tr data-id="104866">
+            <td class="checkbox-cell">
+                <div class="checkbox" title="Select"></div>
+            </td>
+            <th data-title="Title" data-titlecell="">
+                <div class="element small hasstatus" data-type="craft\elements\Entry" data-id="104866" data-site-id="6" data-status="live" data-label="Metacognition and Self-regulated Learning" data-url="https://researchschool.org.uk/bradford/event/metacognition-and-self-regulated-learning/"
+                data-level="" title="Metacognition and Self-regulated Learning – Bradford Research School" data-editable=""><span class="status live"></span>
+                    <div class="label"><span class="title"><a href="https://researchschool.org.uk/admin/entries/event/104866-metacognition-and-self-regulated-learning?site=bradford">Metacognition and Self-regulated Learning</a></span></div>
+                </div>
+            </th>
+            <td data-titleTypei  <span>Twilight / Briefing</span></td>
+            <td data-title="URI" data-attr="uri">  <span>13/12/2020, 15:00</span></td>
+            <td data-title="Event Categories">
+                <span>35</span>
+            </td>
+            <td>
+                 <div class="progress">
+                     <div class="meter bg-red" title="Engaged 60%">
+                         <span style="width: 60%"></span>
+                     </div>
+                     <div class="meter bg-orange" title="Sustained 28%">
+                         <span style="width: 28%"></span>
+                     </div>
+                     <div class="meter bg-blue" title="Embedded 12%">
+                         <span style="width: 12%"></span>
+                     </div>
+                 </div>
+            </td>
+        </tr>
+        <tr data-id="1279">
+            <td class="checkbox-cell">
+                <div class="checkbox" title="Select"></div>
+            </td>
+            <th data-title="Title" data-titlecell="">
+                <div class="element small hasstatus" data-type="craft\elements\Entry" data-id="1279" data-site-id="6" data-status="disabled" data-label="Training: A Memorable 5 Year English Curriculum" data-url="https://researchschool.org.uk/bradford/event/training-a-memorable-5-year-english-curriculum/"
+                data-level="" title="Training: A Memorable 5 Year English Curriculum – Bradford Research School" data-editable=""><span class="status disabled"></span>
+                    <div class="label"><span class="title"><a href="https://researchschool.org.uk/admin/entries/event/1279-training-a-memorable-5-year-english-curriculum?site=bradford">Training: A Memorable 5 Year English Curriculum</a></span></div>
+                </div>
+            </th>
+            <td data-titleTypei  <span>Twilight / Briefing</span></td>
+            <td data-title="URI" data-attr="uri">  <span>13/12/2020, 15:00</span></td>
+            <td data-title="Event Categories">
+                <span>35</span>
+            </td>
+            <td>
+                 <div class="progress">
+                     <div class="meter bg-red" title="Engaged 60%">
+                         <span style="width: 60%"></span>
+                     </div>
+                     <div class="meter bg-orange" title="Sustained 28%">
+                         <span style="width: 28%"></span>
+                     </div>
+                     <div class="meter bg-blue" title="Embedded 12%">
+                         <span style="width: 12%"></span>
+                     </div>
+                 </div>
+            </td>
+        </tr>
+        <tr data-id="188702">
+            <td class="checkbox-cell">
+                <div class="checkbox" title="Select"></div>
+            </td>
+            <th data-title="Title" data-titlecell="">
+                <div class="element small hasstatus" data-type="craft\elements\Entry" data-id="188702" data-site-id="6" data-status="live" data-label="Training: Maximising Memory in Primary Schools" data-url="https://researchschool.org.uk/bradford/event/training-maximising-memory-and-the-science-of-learning-1/"
+                data-level="" title="Training: Maximising Memory in Primary Schools – Bradford Research School" data-editable=""><span class="status live"></span>
+                    <div class="label"><span class="title"><a href="https://researchschool.org.uk/admin/entries/event/188702-training-maximising-memory-and-the-science-of-learning-1?site=bradford">Training: Maximising Memory in Primary Schools</a></span></div>
+                </div>
+            </th>
+           <td data-title=Type><span>Twilight / Briefing</span></td>
+            <td data-title="URI" data-attr="uri">  <span>13/12/2020, 15:00</span></td>
+            <td data-title="Event Categories">
+                <span>35</span>
+            </td>
+            <td>
+                 <div class="progress">
+                     <div class="meter bg-red" title="Engaged 60%">
+                         <span style="width: 60%"></span>
+                     </div>
+                     <div class="meter bg-orange" title="Sustained 28%">
+                         <span style="width: 28%"></span>
+                     </div>
+                     <div class="meter bg-blue" title="Embedded 12%">
+                         <span style="width: 12%"></span>
+                     </div>
+                 </div>
+            </td>
+        </tr>
+        <tr data-id="1285">
+            <td class="checkbox-cell">
+                <div class="checkbox" title="Select"></div>
+            </td>
+            <th data-title="Title" data-titlecell="">
+                <div class="element small hasstatus" data-type="craft\elements\Entry" data-id="1285" data-site-id="6" data-status="live" data-label="Training: Leading Learning and Teacher Development" data-url="https://researchschool.org.uk/bradford/event/training-leading-learning/"
+                data-level="" title="Training: Leading Learning and Teacher Development – Bradford Research School" data-editable=""><span class="status live"></span>
+                    <div class="label"><span class="title"><a href="https://researchschool.org.uk/admin/entries/event/1285-training-leading-learning?site=bradford">Training: Leading Learning and Teacher Development</a></span></div>
+                </div>
+            </th>
+           <td data-title=Type><span>Twilight / Briefing</span></td>
+            <td data-title="URI" data-attr="uri">  <span>13/12/2020, 15:00</span></td>
+            <td data-title="Event Categories">
+                <span>35</span>
+            </td>
+            <td>
+                 <div class="progress">
+                     <div class="meter bg-red" title="Engaged 60%">
+                         <span style="width: 60%"></span>
+                     </div>
+                     <div class="meter bg-orange" title="Sustained 28%">
+                         <span style="width: 28%"></span>
+                     </div>
+                     <div class="meter bg-blue" title="Embedded 12%">
+                         <span style="width: 12%"></span>
+                     </div>
+                 </div>
+            </td>
+        </tr>
+        <tr data-id="8888">
+            <td class="checkbox-cell">
+                <div class="checkbox" title="Select"></div>
+            </td>
+            <th data-title="Title" data-titlecell="">
+                <div class="element small hasstatus" data-type="craft\elements\Entry" data-id="8888" data-site-id="6" data-status="live" data-label="Fully Funded for Leeds Schools: Improving Secondary Science" data-url="https://researchschool.org.uk/bradford/event/improving-secondary-science/"
+                data-level="" title="Fully Funded for Leeds Schools: Improving Secondary Science – Bradford Research School" data-editable=""><span class="status live"></span>
+                    <div class="label"><span class="title"><a href="https://researchschool.org.uk/admin/entries/event/8888-improving-secondary-science?site=bradford">Fully Funded for Leeds Schools: Improving Secondary Science</a></span></div>
+                </div>
+            </th>
+           <td data-title=Type><span>Twilight / Briefing</span></td>
+            <td data-title="URI" data-attr="uri">  <span>13/12/2020, 15:00</span></td>
+            <td data-title="Event Categories">
+                <span>35</span>
+            </td>
+            <td> <div class="progress">
+                     <div class="meter bg-red" title="Engaged 60%">
+                         <span style="width: 60%"></span>
+                     </div>
+                     <div class="meter bg-orange" title="Sustained 28%">
+                         <span style="width: 28%"></span>
+                     </div>
+                     <div class="meter bg-blue" title="Embedded 12%">
+                         <span style="width: 12%"></span>
+                     </div>
+                 </div></td>
+        </tr>
+        <tr data-id="1283">
+            <td class="checkbox-cell">
+                <div class="checkbox" title="Select"></div>
+            </td>
+            <th data-title="Title" data-titlecell="">
+                <div class="element small hasstatus" data-type="craft\elements\Entry" data-id="1283" data-site-id="6" data-status="disabled" data-label="Training: Improving Literacy in Primary Schools" data-url="https://researchschool.org.uk/bradford/event/training-improving-literacy-in-primary-schools/"
+                data-level="" title="Training: Improving Literacy in Primary Schools – Bradford Research School" data-editable=""><span class="status disabled"></span>
+                    <div class="label"><span class="title"><a href="https://researchschool.org.uk/admin/entries/event/1283-training-improving-literacy-in-primary-schools?site=bradford">Training: Improving Literacy in Primary Schools</a></span></div>
+                </div>
+            </th>
+           <td data-title=Type><span>Twilight / Briefing</span></td>
+            <td data-title="URI" data-attr="uri">  <span>13/12/2020, 15:00</span></td>
+            <td data-title="Event Categories">
+                <span>35</span>
+            </td>
+            <td>
+                 <div class="progress">
+                     <div class="meter bg-red" title="Engaged 60%">
+                         <span style="width: 60%"></span>
+                     </div>
+                     <div class="meter bg-orange" title="Sustained 28%">
+                         <span style="width: 28%"></span>
+                     </div>
+                     <div class="meter bg-blue" title="Embedded 12%">
+                         <span style="width: 12%"></span>
+                     </div>
+                 </div>
+            </td>
+        </tr>
+
+    </tbody>
+</table>
+</div>
+{% endset %}

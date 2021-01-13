@@ -1,0 +1,49 @@
+{
+    "name": "percipioglobal/rsn-data",
+    "description": "RSN Data Engagement plugin for CraftCMS",
+    "type": "craft-plugin",
+    "version": "1.0.0",
+    "keywords": [
+        "craft",
+        "cms",
+        "craftcms",
+        "craft-plugin",
+        "rsn data"
+    ],
+    "support": {
+        "docs": "https://github.com/percipioglobal/craft-rsn-data",
+        "issues": "https://github.com/percipioglobal/craft-rsn-data/issues"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Percipio",
+            "homepage": "https://percipio.london"
+        }
+    ],
+    "require": {
+        "craftcms/cms": "^3.0.0"
+    },
+    "require-dev": {
+      "craftcms/cms": "^3.2.0",
+      "codeception/codeception": "^3.0",
+      "vlucas/phpdotenv": "^3.0"
+    },
+    "autoload": {
+        "psr-4": {
+          "percipioglobal\\rsndata\\": "src/"
+        }
+    },
+    "extra": {
+        "name": "RSN Data",
+        "handle": "rsn-data",
+        "developer": "Percipio",
+        "developerUrl": "https://percipio.london",
+        "documentationUrl": "https://github.com/percipioglobal/craft-rsn-data",
+        "changelogUrl": "https://github.com/percipioglobal/craft-rsn-data/CHANGELOG.md",
+        "components": {
+            "rsnDataService": "percipioglobal\\rsndata\\services\\RsnDataService"
+        },
+        "class": "percipioglobal\\rsndata\\RsnData"
+    }
+}
