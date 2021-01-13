@@ -44,7 +44,7 @@ class IndexCPSectionAsset extends AssetBundle
     {
         // define the path that your publishable resources live
         $this->sourcePath = "@percipioglobal/rsndata/assetbundles/indexcpsection/dist";
-        $googleApiKey = $this->settings()->googleApiKey;
+        $googleApiKey = '';
 
         // define the dependencies
         $this->depends = [
