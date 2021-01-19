@@ -13,11 +13,12 @@
     { label: title, url: pluginCpUrl },
 ] %}
 
+{% set selectedSite = craft.request.getQuery('site')|default('') %}
 {% set navItems = {
-    dashboard: { label: "Dashboard"|t('rsnData'), url: pluginCpUrl },
-    trainings: { label: "Trainings"|t('rsnData'), url: url('rsn-data/trainings') },
-    schools: { label: "Schools"|t('rsnData'), url: url('rsn-data/schools') },
-    export: { label: "Export"|t('rsnData'), url: url('rsn-data/export') },
+    dashboard: { label: "Dashboard"|t('rsnData'), url: pluginCpUrl~'?site='~selectedSite },
+    trainings: { label: "Trainings"|t('rsnData'), url: url('rsn-data/trainings/?site='~selectedSite) },
+    schools: { label: "Schools"|t('rsnData'), url: url('rsn-data/schools/?site='~selectedSite) },
+    export: { label: "Export"|t('rsnData'), url: url('rsn-data/export/?site='~selectedSite) },
 } %}
 
 {% block sidebar %}

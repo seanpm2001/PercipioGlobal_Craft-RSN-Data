@@ -23,12 +23,16 @@
 {# The title of this CP section #}
 {% set title = "Dashboard"|t('rsn-data') %}
 {% set selectedNavItem = 'dashboard' %}
+{% set selectedSite = craft.request.getQuery('site')|default('') %}
 
 {# any header buttons #}
 {% block actionButton %}
-    <div>
-        <button type="button" id="context-btn" class="btn menubtn sitemenubtn" data-icon="world" tabindex="0" role="combobox" aria-haspopup="true" aria-expanded="true">Bradford Research School</button>
-    </div>
+        {% include "rsn-data/_includes/sites-menu.twig" with {
+        baseUrl: '/admin/rsn-data/',
+        currentSiteId: currentSite.id,
+        currentSiteHandle: currentSite.handle,
+        currentSiteName:  currentSite.name
+    } %}
 <div class="input ltr">
     <div class="select js-select">
         <select id="data-school-set" name="">

@@ -19,49 +19,41 @@
 {% do view.registerAssetBundle("percipioglobal\\rsndata\\assetbundles\\rsndata\\RsnDataAsset") %}
 {% do view.registerAssetBundle("percipioglobal\\rsndata\\assetbundles\\indexcpsection\\IndexCPSectionAsset") %}
 
-
 {# The title of this CP section #}
 {% set title = "Export Data"|t('rsn-data') %}
 {% set selectedNavItem = 'export' %}
+{% set selectedSite = craft.request.getQuery('site')|default('') %}
 
+{# any header buttons #}
+{% block actionButton %}
+        {% include "rsn-data/_includes/sites-menu.twig" with {
+        baseUrl: '/admin/rsn-data/' ~ selectedNavItem,
+        currentSiteId: currentSite.id,
+        currentSiteHandle: currentSite.handle,
+        currentSiteName:  currentSite.name
+    } %}
+
+<div class="input ltr">
+    <div class="select js-select">
+        <select id="data-school-set" name="">
+            <option value="schools-all" selected>All Schools</option>
+        </select>
+    </div>
+</div>
+<div class="input ltr">
+    <div class="select js-select">
+        <select id="data-time-set" name="Time Period">
+            <optgroup label="Time">
+                <option value="12-months" selected>All time</option>
+            </optgroup>
+        </select>
+    </div>
+</div>
+{% endblock %}
 
 {% set content %}
     <h2>{{ title }}</h2>
-    <p>Select your data options to export</p>
     <p>
-        <div>
-            <button type="button" id="context-btn" class="btn menubtn sitemenubtn" data-icon="world" tabindex="0" role="combobox" aria-haspopup="true" aria-expanded="true">Bradford Research School</button>
-        </div>
-    </p>
-    <p>
-        <div class="input ltr">
-            <div class="select js-select">
-                <select id="data-school-set" name="">
-                    <option value="schools-all" selected>All Schools</option>
-                    <option value="schools-priority">Priority Schools</option>
-                </select>
-            </div>
-        </div>
-    </p>
-    <p>
-        <div class="input ltr">
-            <div class="select js-select">
-                <select id="data-time-set" name="Time Period">
-                    <optgroup label="Time">
-                         <option value="all-time" selected>All time</option>
-                        <option value="12-months">Last 12 months</option>
-                        <option value="3-months">Last 3 months</option>
-                    </optgroup>
-                    <optgroup label="School Year">
-                        <option value="2018">2018 - 19 school year</option>
-                        <option value="2019">2019 - 20 school year</option>
-                        <option value="2020">2020 - 21 school year</option>
-                    </optgroup>
-                </select>
-            </div>
-        </div>
-    </p>
-    <p>
-        <a href="https://api.v2.metaseed.io/export/bradford-all-schools-all-time.csv?auth=rsn-staging&token=kPX2asGX5ZI8yebN33zBKbN33zBKZZkPX2asGX5ZI8" target="blank" class="btn submit">Export CSV</a>
+        <a href="https://api.v2.metaseed.io/export/{{ selectedSite }}-all-schools-all-time.csv?auth=rsn-staging&token=kPX2asGX5ZI8yebN33zBKbN33zBKZZkPX2asGX5ZI8" target="blank" class="btn submit">Export CSV</a>
     </p>
 {% endset %}

@@ -15,13 +15,19 @@ use percipioglobal\rsndata\models\Settings;
 use percipioglobal\rsndata\fields\RsnDataField as RsnDataFieldField;
 use percipioglobal\rsndata\widgets\DataEngagement as DataEngagementWidget;
 
+
 use Craft;
+use craft\base\Element;
 use craft\base\Plugin;
-use craft\services\Plugins;
+use craft\events\RegisterComponentTypesEvent;
 use craft\events\PluginEvent;
+use craft\helpers\ElementHelper;
+use craft\helpers\UrlHelper;
 use craft\services\Fields;
 use craft\services\Dashboard;
-use craft\events\RegisterComponentTypesEvent;
+use craft\services\Plugins;
+use craft\services\UserPermissions;
+use craft\web\UrlManager;
 
 use yii\base\Event;
 
@@ -189,13 +195,13 @@ class RsnData extends Plugin
     // =========================================================================
 
 
-    private function _registerCpRoutes()
+    protected function _registerCpRoutes()
     {
         Event::on(UrlManager::class, UrlManager::EVENT_REGISTER_CP_URL_RULES, function(RegisterUrlRulesEvent $event) {
             $event->rules['rsn-data/'] = ['template' => 'rsn-data/'];
-            $event->rules['rsn-data/schools'] = ['template' => 'rsn-data/cp/schools'];
-            $event->rules['rsn-data/schools/<siteId:\d+>'] = ['template' => 'rsn-data/cp/schools/view'];
-            $event->rules['rsn-data/traings'] = ['template' => 'rsn-data/cp/trainings'];
+            $event->rules['rsn-data/schools/'] = ['template' => 'rsn-data/cp/schools'];
+            $event->rules['rsn-data/schools/'] = ['template' => 'rsn-data/cp/schools/view'];
+            $event->rules['rsn-data/trainings/'] = ['template' => 'rsn-data/cp/trainings'];
             $event->rules['rsn-data/export/'] = ['template' => 'rsn-data/cp/export/'];
         });
     }

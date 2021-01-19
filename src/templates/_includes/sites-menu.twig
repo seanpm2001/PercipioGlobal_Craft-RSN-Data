@@ -1,0 +1,26 @@
+{% import "_includes/forms" as forms %}
+
+{% set activeSite = 0 %}
+
+{% for sites in craft.app.sites.getAllSites() %}
+    {%  if sites.handle == selectedSite %}
+        {%  set activeSite = 1 %}
+        <div id="sites-btn" class="btn menubtn" data-icon="world">{{ sites.name }}</div>
+    {%  endif %}
+{% endfor %}
+    {%  if activeSite == 0 %}
+        <div id="sites-btn" class="btn menubtn" data-icon="world">{{ currentSiteName }}</div>
+    {%  endif %}
+<div class="menu">
+    <ul class="padded">
+        {% for site in craft.app.sites.getAllSites() %}
+            {%- set siteEnabled = site.enabled ?? null -%}
+                <li>
+                {% set url = baseUrl ~ '?site=' ~site.handle %}
+                    <a href="{{ url }}" title="{{ site.handle }}">
+                        <div class="status  {% if siteEnabled %} enabled{%  endif %}"></div>{{ site.name }}
+                    </a>
+                </li>
+        {% endfor %}
+    </ul>
+</div>
