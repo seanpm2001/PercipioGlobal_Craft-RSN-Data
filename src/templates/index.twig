@@ -23,7 +23,7 @@
 {# The title of this CP section #}
 {% set title = "Dashboard"|t('rsn-data') %}
 {% set selectedNavItem = 'dashboard' %}
-{% set selectedSite = craft.request.getQuery('site')|default('') %}
+{% set selectedSite = craft.app.request.getQueryParam('site')|default('') %}
 
 {# any header buttons #}
 {% block actionButton %}
@@ -37,22 +37,25 @@
     <div class="select js-select">
         <select id="data-school-set" name="">
             <option value="schools-all" selected>All Schools</option>
-            <option value="schools-priority">Priority Schools</option>
+            <!-- <option value="schools-priority">Priority Schools</option> -->
         </select>
     </div>
 </div>
 <div class="input ltr">
     <div class="select js-select">
         <select id="data-time-set" name="Time Period">
+            
             <optgroup label="Time">
+                <option value="12-months" selected>All time<option>
                 <option value="12-months" selected>Last 12 months</option>
-                <option value="3-months">Last 3 months</option>
+            <!-- <option value="3-months">Last 3 months</option> -->
             </optgroup>
-            <optgroup label="School Year">
+            <!--
+                <optgroup label="School Year">
                 <option value="2018">2018 - 19 school year</option>
-                <option value="2019">2019 - 20 school year</option>
-                <option value="2020">2020 - 21 school year</option>
-            </optgroup>
+                <option value="2019" selected>2019 - 20 school year</option>
+               <option value="2020">2020 - 21 school year</option>
+            </optgroup> -->
         </select>
     </div>
 </div>
@@ -60,10 +63,5 @@
 
 {% set content %}
     <h2>{{ title }}</h2>
-    <p>Cumulative engagement totals over time period: <b data-time-set>last 12 months</b>.</p>
-    <canvas id="chart-totals" class="chart-js" height="48"></canvas>
-
-
-    <p>Engagement data showing <b data-school-set>all schools</b> over time period: <b data-time-set>last 12 months</b>.</p>
-    <canvas id="chart-line" class="chart-js"></canvas>
+    <p>Engagaement data is currently being ported from the previous build. Your engagement metrics will appear here soon.</p>
 {% endset %}

@@ -22,7 +22,7 @@
 {# The title of this CP section #}
 {% set title = "Export Data"|t('rsn-data') %}
 {% set selectedNavItem = 'export' %}
-{% set selectedSite = craft.request.getQuery('site')|default('') %}
+{% set selectedSite = craft.app.request.getQueryParam('site')|default('') %}
 
 {# any header buttons #}
 {% block actionButton %}
