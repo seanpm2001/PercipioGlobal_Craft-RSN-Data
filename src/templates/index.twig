@@ -23,7 +23,7 @@
 {# The title of this CP section #}
 {% set title = "Dashboard"|t('rsn-data') %}
 {% set selectedNavItem = 'dashboard' %}
-{% set selectedSite = craft.app.request.getQueryParam('site')|default('') %}
+{% set selectedSite = craft.app.request.getQueryParam('site')|default('main') %}
 
 {# any header buttons #}
 {% block actionButton %}

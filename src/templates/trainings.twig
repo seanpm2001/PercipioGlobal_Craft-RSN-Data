@@ -64,7 +64,7 @@
             {% set eventTimetable = event.eventDatesTime.one() %}
         {% endif %}
 
-        {% set eventDate = 'not set' %}
+        {% set eventDate = eventTimetable.startDateTime ?? '' %}
         {% set dataEngagement = null %}
         {% set dataEnganged = 0 %}
         {% set dataSustained = 0 %}
@@ -90,7 +90,7 @@
             {% endif %}
         {% endif %}
 
-        {% if eventTimetable.startDateTime is not null %}
+        {% if eventDate %}
               {% set eventDate = eventTimetable.startDateTime.date|date('d/n/Y, ') ~ eventTimetable.startTime|date('H:i') %}
         {% endif %}
         
