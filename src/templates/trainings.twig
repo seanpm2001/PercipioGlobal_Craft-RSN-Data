@@ -63,8 +63,12 @@
         {% else %}
             {% set eventTimetable = event.eventDatesTime.one() %}
         {% endif %}
-
+        
         {% set eventDate = eventTimetable.startDateTime ?? '' %}
+        {% if eventDate %}
+            {% set eventDate = eventTimetable.startDateTime|date('d/n/Y, ') ~ eventTimetable.startTime|date('H:i') %}
+        {% endif %}
+
         {% set dataEngagement = null %}
         {% set dataEnganged = 0 %}
         {% set dataSustained = 0 %}
@@ -88,10 +92,7 @@
                 {% set dataSustained = ((dataSustained / dataEngagement|length) * 100)|round %}
                 {% set dataEmbedded = ((dataEmbedded / dataEngagement|length) * 100)|round %}
             {% endif %}
-        {% endif %}
 
-        {% if eventDate %}
-              {% set eventDate = eventTimetable.startDateTime.date|date('d/n/Y, ') ~ eventTimetable.startTime|date('H:i') %}
         {% endif %}
         
         <tr data-id="{{ event.id }}" tabindex="0">
@@ -138,9 +139,9 @@
                         <span style="width: {{ dataEmbedded }}%"></span>
                     </div>
                 </div>
-             </td>
+            </td>
         </tr>
-         {% endfor %}
+        {% endfor %}
 
     </tbody>
 </table>
