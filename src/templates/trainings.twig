@@ -19,7 +19,6 @@
 {% do view.registerAssetBundle("percipioglobal\\rsndata\\assetbundles\\rsndata\\RsnDataAsset") %}
 {% do view.registerAssetBundle("percipioglobal\\rsndata\\assetbundles\\indexcpsection\\IndexCPSectionAsset") %}
 
-
 {# The title of this CP section #}
 {% set title = "Trainings"|t('rsn-data') %}
 {% set selectedNavItem = 'trainings' %}
@@ -36,7 +35,8 @@
 {% endblock %}
 
 {% set content %}
-    <div class="tableview tablepane">
+    
+<div class="tableview tablepane">
    <table class="data fullwidth">
     <thead>
         <tr>
@@ -49,7 +49,7 @@
     </thead>
     <tbody>
 
-         {%- set events = craft.entries.section('events')
+        {%- set events = craft.entries.section('events')
             .site(selectedSite)
             .orderBy('postDate desc')
             .anyStatus()
@@ -111,10 +111,6 @@
                         </span>
                     </div>
                 </div>
-                <!--
-                    Engaged: (1 day)
-                    Sustained: Training (2 day)
-                    Embedded:  (3+ days+) -->
             </td>
             
             <td data-titleType>

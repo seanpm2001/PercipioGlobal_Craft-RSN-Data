@@ -13,7 +13,6 @@
     { label: title, url: pluginCpUrl },
 ] %}
 
-{% set selectedSite = craft.app.request.getQueryParam('site')|default('main') %}
 {% set navItems = {
     dashboard: { label: "Dashboard"|t('rsnData'), url: pluginCpUrl~'?site='~selectedSite },
     trainings: { label: "Trainings"|t('rsnData'), url: url('rsn-data/trainings/?site='~selectedSite) },

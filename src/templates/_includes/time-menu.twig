@@ -1,0 +1,44 @@
+{% import "_includes/forms" as forms %}
+{% set activeTime = 0 %}
+{% set times = [
+    {
+        'value': '6',
+        'label': 'Last 6 months'
+    },
+    {
+        'value': '12',
+        'label': 'Last 12 months'
+    },
+    {
+        'value': "now"|date("Y"),
+        'label': 'Current Year (' ~ "now"|date("Y") ~')'
+    },
+    {
+        'value': ("now"|date("Y") - 1),
+        'label': 'Previous Year (' ~ ("now"|date("Y") - 1) ~')'
+    }
+] %}
+
+{% set activeTime = 0 %}
+{% for time in times %}
+    {%  if time.value == selectedTime %}
+        {%  set activeTime = 1 %}
+        <div id="time-btn" class="btn menubtn ml-4" data-icon="time" data-time="{{ time.label }}">{{ time.label }}</div>
+    {%  endif %}
+{% endfor %}
+{%  if activeTime == 0 %}
+    <div id="time-btn" class="btn menubtn  ml-4" data-icon="time">Last 6 months</div>
+{%  endif %}
+<div class="menu">
+    <ul class="padded">
+        {% for time in times %}
+        {% set url = baseUrl ~ '?site=' ~ selectedSite ~ '&time=' ~ time.value %}
+        <li>
+            <a href="{{ url }}" title="{{ time.value }}">
+                {{ time.label }}
+            </a>
+        </li>
+               
+        {% endfor %}
+    </ul>
+</div>

@@ -61,6 +61,7 @@ class IndexCPSectionAsset extends AssetBundle
         ];
 
         $this->css = [
+            'css/tailwind.min.css',
             'css/Index.css',
         ];
 

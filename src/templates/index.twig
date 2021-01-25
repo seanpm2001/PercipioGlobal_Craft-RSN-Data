@@ -12,56 +12,208 @@
  * @since     1.0.0
  */
 #}
-{% extends "rsn-data/layouts/_cp" %}
+{%- extends "rsn-data/layouts/_cp" -%}
 
-{% import "_includes/forms" as forms %}
+{%- import "_includes/forms" as forms -%}
 
-{% do view.registerAssetBundle("percipioglobal\\rsndata\\assetbundles\\rsndata\\RsnDataAsset") %}
-{% do view.registerAssetBundle("percipioglobal\\rsndata\\assetbundles\\indexcpsection\\IndexCPSectionAsset") %}
+{%- do view.registerAssetBundle("percipioglobal\\rsndata\\assetbundles\\rsndata\\RsnDataAsset") -%}
+{%- do view.registerAssetBundle("percipioglobal\\rsndata\\assetbundles\\indexcpsection\\IndexCPSectionAsset") -%}
 
 
 {# The title of this CP section #}
-{% set title = "Dashboard"|t('rsn-data') %}
-{% set selectedNavItem = 'dashboard' %}
-{% set selectedSite = craft.app.request.getQueryParam('site')|default('main') %}
+{%- set title = "Dashboard"|t('rsn-data') -%}
+{%- set selectedNavItem = 'dashboard' -%}
+{%- set selectedSite = craft.app.request.getQueryParam('site')|default('main') -%}
+{%- set selectedTime = craft.app.request.getQueryParam('time')|default('6') -%}
+{%- set uri = craft.app.request.fullPath() -%}
 
 {# any header buttons #}
-{% block actionButton %}
-        {% include "rsn-data/_includes/sites-menu.twig" with {
-        baseUrl: '/admin/rsn-data/',
-        currentSiteId: currentSite.id,
-        currentSiteHandle: currentSite.handle,
-        currentSiteName:  currentSite.name
-    } %}
-<div class="input ltr">
-    <div class="select js-select">
-        <select id="data-school-set" name="">
-            <option value="schools-all" selected>All Schools</option>
-            <!-- <option value="schools-priority">Priority Schools</option> -->
-        </select>
-    </div>
-</div>
-<div class="input ltr">
-    <div class="select js-select">
-        <select id="data-time-set" name="Time Period">
-            
-            <optgroup label="Time">
-                <option value="12-months" selected>All time<option>
-                <option value="12-months" selected>Last 12 months</option>
-            <!-- <option value="3-months">Last 3 months</option> -->
-            </optgroup>
-            <!--
-                <optgroup label="School Year">
-                <option value="2018">2018 - 19 school year</option>
-                <option value="2019" selected>2019 - 20 school year</option>
-               <option value="2020">2020 - 21 school year</option>
-            </optgroup> -->
-        </select>
-    </div>
-</div>
-{% endblock %}
+{%- block actionButton -%}
 
-{% set content %}
-    <h2>{{ title }}</h2>
-    <p>Engagaement data is currently being ported from the previous build. Your engagement metrics will appear here soon.</p>
-{% endset %}
+        {%- include "rsn-data/_includes/sites-menu.twig" with {
+            baseUrl: '/admin/rsn-data/',
+            currentSiteId: currentSite.id,
+            currentSiteHandle: currentSite.handle,
+            currentSiteName:  currentSite.name
+        } -%}
+
+        {%- include "rsn-data/_includes/time-menu.twig" with {
+            baseUrl: '/admin/rsn-data/',
+            selectedTime: selectedTime
+        } -%}
+
+{%- endblock -%}
+
+{%- set content -%}
+
+    <div class="relative flex flex-row justify-between flex-wrap">
+
+    {%- set currentYear = "now"|date("Y") -%}
+    {%- set previousYear = "now"|date("Y")-1 -%}
+
+    {%- switch selectedTime -%}
+        {%- case "12" -%}
+            {%- set start = date('12 months ago')|atom -%}
+            {%- set end = date('now')|atom -%}
+        {%- case currentYear -%}
+            {%- set start = date('first day of this year')|atom -%}
+            {%- set end = date('now')|atom -%}
+        {%- case previousYear -%}
+            {%- set start = date('first day of last year')|atom -%}
+            {%- set end = date('last day of last year')|atom -%}
+        {%- default -%}
+            {%- set start = date('6 months ago')|atom -%}
+            {%- set end = date('now')|atom -%}
+    {%- endswitch -%}
+
+    {%- set events = craft.entries.section('events')
+        .site(selectedSite)
+        .dateCreated(['and', ">= #{start}", "< #{end}"])
+        .anyStatus()
+        .all()
+    -%}
+
+    {%- set allData = [] -%}
+    {%- set allSupport = [] -%}
+
+    {%- for event in events -%}
+    
+        {%- set dataEngagement = null -%}
+        {%- set dataEnganged = 0 -%}
+        {%- set dataSustained = 0 -%}
+        {%- set dataEmbedded = 0 -%}
+
+        {%- if event.dataEngagement is iterable and (event.dataEngagement.data is not null and event.dataEngagement.support is iterable) -%}
+            {%- set dataEngagement = event.dataEngagement.data -%}
+            {%- set allData = dataEngagement|merge(allData) -%}
+        {%- endif -%}
+
+        {%- if event.dataEngagement is iterable and (event.dataEngagement.support is not null and event.dataEngagement.support is iterable) -%}
+            {%- set supportEngagement = event.dataEngagement.support -%}
+            {%- set allSupport = supportEngagement|merge(allSupport) -%}
+        {%- endif -%}
+
+        {%- if loop.last and allData is not empty -%}
+
+            {%- set totalSchools = totalSchools(allData) -%}
+            {%- set avgSchools = avgSchools(allData, loop.length) -%}
+            {%- set totalAttendees = totalAttendees(allData) -%}
+            {%- set avgAttendees = avgAttendees(allData, loop.length) -%}
+            {%- set totalDays = totalDays(allData) -%}
+            {%- set totalEngaged = totalEngaged(allData) -%}
+            {%- set totalSustained = totalSustained(allData) -%}
+            {%- set totalEmbedded = totalEmbedded(allData) -%}
+
+            <div class="widget inline-flex p-1 w-full md:w-1/2 xl:w-1/4">
+                <div class="front w-full">
+                    <div class="pane h-auto l:h-72 xl:h-auto">
+                        <div class="widget-heading">
+                            <h2 class="text-lg font-bold leading-5 mb-1">Total events</h2>
+                            <h6 class="text-xs uppercase" data-time-set>Last 12 months</h6>
+                            <div class="body">
+                                <span class="text-5xl text-center block my-6 tracking-tight font-semibold">
+                                    {{ loop.index|number_format }}</span>
+                                <p>Average <b>{{ (loop.index/selectedTime)|number_format }}</b> training events per month.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="widget inline-flex p-1 w-full md:w-1/2 xl:w-1/4">
+                <div class="front w-full">
+                    <div class="pane h-auto l:h-72 xl:h-auto">
+                        <div class="widget-heading">
+                            <h2 class="text-lg font-bold leading-5 mb-1">Total attendees</h2>
+                            <h6 class="text-xs uppercase" data-time-set>Last 12 months</h6>
+                            <div class="body">
+                                <span class="text-5xl text-center block my-6 tracking-tight font-semibold">
+                                    {{ totalAttendees|number_format }}</span>
+                                <p>Average <b>{{ avgAttendees|number_format }}</b> attendees per training.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="widget inline-flex p-1 w-full md:w-1/2 xl:w-1/4">
+                <div class="front w-full">
+                    <div class="pane h-auto l:h-72 xl:h-auto">
+                        <div class="widget-heading">
+                            <h2 class="text-lg font-bold leading-5 mb-1">Total schools</h2>
+                            <h6 class="text-xs uppercase" data-time-set>Last 12 months</h6>
+                            <div class="body">
+                                <span class="text-5xl text-center block my-6 tracking-tight font-semibold">
+                                    {{ totalSchools|number_format }}    
+                                </span>
+                                <p>Average <b>{{ avgSchools|number_format }}</b> schools per training.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="widget inline-flex p-1 w-full md:w-1/2 xl:w-1/4">
+                <div class="front w-full">
+                    <div class="pane h-auto l:h-72 xl:h-auto">
+                        <div class="widget-heading">
+                            <h2 class="text-lg font-bold leading-5 mb-1">Total days</h2>
+                            <h6 class="text-xs uppercase" data-time-set>Last 12 months</h6>
+                            <div class="body">
+                                <span class="text-5xl text-center block my-6 tracking-tight font-semibold">
+                                    {{ totalDays|number_format }} 
+                                </span>
+                                <p>Average {{ (totalDays / totalAttendees)|number_format(1) }} days per attendee.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="widget inline-flex p-1 w-full">
+                <div class="front w-full">
+                    <div class="pane">
+                        <div class="widget-heading">
+                            <h2 class="text-lg font-bold">Engagement Level</h2>
+                            <h6 class="text-xs uppercase" data-time-set>Last 12 months</h6>
+                            <div class="body h-52 pb-6">
+                                <canvas id="chart-engagementLevel" 
+                                        class="chart-js"
+                                        data-engaged="{{ totalEngaged }}"
+                                        data-sustained="{{ totalSustained }}"
+                                        data-embedded="{{ totalEmbedded }}">
+                                </canvas>
+                                <p>Showing the split of engangement levels accross all events in this time period.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {%- if allSupport is not empty -%}
+            {%- set followOnSupportCats = followOnSupport(allSupport) -%}
+            <div class="widget inline-flex p-1 w-full">
+                <div class="front w-full">
+                    <div class="pane relative">
+                        <div class="widget-heading">
+                            <h2 class="text-lg font-bold">Follow on support offered</h2>
+                            <h6 class="text-xs uppercase" data-time-set>Last 12 months</h6>
+                            <div class="body">
+                                <canvas 
+                                    id="chart-followOnSupport" 
+                                    class="chart-js"
+                                    data-labels="{%- for key in followOnSupportCats|keys -%}{{ key }}{{ not loop.last ? '|' }}{%- endfor -%}"
+                                    data-values="{%- for value in followOnSupportCats -%}{{ value }}{{ not loop.last ? '|' }}{%- endfor -%}">
+                                </canvas>
+                                <p>Showing what types of follow on support have been offered.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {%- endif -%}
+            
+    {%- endif -%}
+{%- endfor -%}
+</div>
+{%- endset -%}

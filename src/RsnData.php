@@ -14,6 +14,7 @@ use percipioglobal\rsndata\services\RsnDataService as RsnDataServiceService;
 use percipioglobal\rsndata\models\Settings;
 use percipioglobal\rsndata\fields\RsnDataField as RsnDataFieldField;
 use percipioglobal\rsndata\widgets\DataEngagement as DataEngagementWidget;
+use percipioglobal\rsndata\helpers\rsnDataExtension; 
 
 
 use Craft;
@@ -105,6 +106,12 @@ class RsnData extends Plugin
         parent::init();
         self::$plugin = $this;
 
+        if (Craft::$app->request->getIsCpRequest()) {
+            // Add in our Twig extension
+            $rsnDataExtension = new rsnDataExtension();
+            Craft::$app->view->registerTwigExtension($rsnDataExtension);
+        }
+
         // Register our fields
         Event::on(
             Fields::class,
@@ -114,7 +121,7 @@ class RsnData extends Plugin
             }
         );
 
-        // Register our widgets
+        /* Register our widgets
         Event::on(
             Dashboard::class,
             Dashboard::EVENT_REGISTER_WIDGET_TYPES,
@@ -122,6 +129,8 @@ class RsnData extends Plugin
                 $event->types[] = DataEngagementWidget::class;
             }
         );
+
+        */
 
         // Do something after we're installed
         Event::on(

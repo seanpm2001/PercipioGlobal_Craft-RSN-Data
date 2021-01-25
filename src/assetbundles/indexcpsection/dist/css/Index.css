@@ -64,3 +64,12 @@
     height: 80vh;
     width: 100%;
 }
+
+
+body.ltr .flex > *:not(:last-child) {
+  margin-right: auto !important;
+}
+
+.flex:not(.flex-nowrap) > * {
+  margin-bottom: auto !important;
+}
