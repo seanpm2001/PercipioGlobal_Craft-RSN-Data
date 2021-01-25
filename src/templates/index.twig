@@ -83,7 +83,7 @@
         {%- set dataSustained = 0 -%}
         {%- set dataEmbedded = 0 -%}
 
-        {%- if event.dataEngagement is iterable and (event.dataEngagement.data is not null and event.dataEngagement.support is iterable) -%}
+        {%- if event.dataEngagement is iterable and (event.dataEngagement.data is not null and event.dataEngagement.data is iterable) -%}
             {%- set dataEngagement = event.dataEngagement.data -%}
             {%- set allData = dataEngagement|merge(allData) -%}
         {%- endif -%}
@@ -189,8 +189,25 @@
                     </div>
                 </div>
             </div>
+        {%- endif -%}
 
-            {%- if allSupport is not empty -%}
+        {%- if loop.last and allData|length == '0' -%}
+            <div class="widget inline-flex p-1 w-full">
+                <div class="front w-full">
+                    <div class="pane relative">
+                        <div class="widget-heading">
+                            <h2 class="text-lg font-bold">Engagement data not found</h2>
+                            <h6 class="text-xs uppercase" data-time-set>Last 12 months</h6>
+                            <div class="body mt-4">
+                                <p>No engagement data has been found for this Research School.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {%- endif -%}
+
+        {%- if loop.last and allSupport is not empty -%}
             {%- set followOnSupportCats = followOnSupport(allSupport) -%}
             <div class="widget inline-flex p-1 w-full">
                 <div class="front w-full">
@@ -211,9 +228,25 @@
                     </div>
                 </div>
             </div>
-            {%- endif -%}
-            
-    {%- endif -%}
+        {%- endif -%}
+
+        {%- if loop.last and allSupport|length == '0' -%}
+            <div class="widget inline-flex p-1 w-full">
+                <div class="front w-full">
+                    <div class="pane relative">
+                        <div class="widget-heading">
+                            <h2 class="text-lg font-bold">Follow on support offered not found</h2>
+                            <h6 class="text-xs uppercase" data-time-set>Last 12 months</h6>
+                            <div class="body mt-4">
+                                <p>No follow on support data has been found for this Research School.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {%- endif -%}
+  
+
 {%- endfor -%}
 </div>
 {%- endset -%}
