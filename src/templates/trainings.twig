@@ -78,6 +78,7 @@
             {% set dataEngagement = event.dataEngagement.data %}
 
             {% for row in dataEngagement %}
+                {% if row.attendance is defined %}
                 {% switch row.attendance %}
                     {% case "1" %}
                         {% set dataEnganged = dataEnganged + 1 %}
@@ -86,6 +87,7 @@
                     {% default %}
                         {% set dataEmbedded = dataEmbedded + 1 %}
                 {% endswitch %}
+                {% endif %}
             {% endfor %}
             {% if dataEngagement|length > 0 %}
                 {% set dataEnganged = ((dataEnganged / dataEngagement|length) * 100)|round %}
