@@ -56,8 +56,87 @@ var defaultLayout = {
     },
 }
 
+var defaultTooltips = {
+  backgroundColor: '#33404d',
+  yPadding: 10,
+	xPadding: 10,
+  callbacks: {
+      labelTextColor: function(tooltipItem, chart) {
+          return '#e5e7eb';
+      }
+  }
+}
+
 var chartBuilder = function() {
 
+  // Completion level
+  var ctx = document.getElementById('chart-engagementCompletion').getContext('2d');
+    var count = $(ctx.canvas).data('count'),
+        totalCount = $(ctx.canvas).data('total-count');
+      var chart = new Chart(ctx, {
+        type: 'horizontalBar',
+        data: {
+            labels: ['Data Entry Completion'],
+            datasets: [{
+              data: [count],
+              label: 'Engagement data complete (%) ',
+              backgroundColor: 'rgb(16, 185, 129)',
+              borderColor: 'rgb(16, 185, 129)',
+            },
+            {
+              data: [totalCount],
+              label: 'Engagement data incomplete (%) ',
+              backgroundColor: 'rgb(190, 24, 93)',
+              borderColor: 'rgb(190, 24, 93)',
+            }]
+        },
+        options: {
+          tooltips: defaultTooltips,
+          layout: {
+            padding: {
+            left: 0,
+            right: 0,
+            top: 0,
+            bottom: 0
+            }
+        },
+        responsive: true,
+           maintainAspectRatio: false,
+          legend:{ display: false },
+          scales: {
+              xAxes: [{
+                  scaleLabel:{
+                      display:false
+                  },
+                  gridLines: {
+                    display: false,
+                    zeroLineWidth: 0,
+                    zeroLineColor: "#f3f7fc",
+                    drawBorder: false
+                  },
+                  ticks: {
+                    display: false
+                  },
+                  stacked: true
+              }],
+              yAxes: [{
+                  maxBarThickness: 64,
+                  gridLines: {
+                      display:false,
+                      zeroLineWidth: 0,
+                      zeroLineColor: "#f3f7fc",
+                      drawBorder: false
+                  },
+                  ticks: {
+                    display: false
+                  },
+                  stacked: true
+              }]
+            },
+          }
+      });
+
+  // Engagement Level
   var ctx = document.getElementById('chart-engagementLevel').getContext('2d');
     var chart = new Chart(ctx, {
 
@@ -71,6 +150,7 @@ var chartBuilder = function() {
             ]
         },
         options: {
+          tooltips: defaultTooltips,
           layout: defaultLayout,
           responsive: true,
           maintainAspectRatio: false,
@@ -86,9 +166,8 @@ var chartBuilder = function() {
                   maxBarThickness: 64,
                   gridLines: {
                       display:false,
-                      color: "#fff",
-                      zeroLineColor: "#fff",
-                      zeroLineWidth: 0
+                      zeroLineWidth: 0,
+                      zeroLineColor: "#fff"
                   },
                   ticks: {
                     display: false
@@ -99,10 +178,11 @@ var chartBuilder = function() {
           }
       });
 
+    // Follow on Support 
     var ctx = document.getElementById('chart-followOnSupport').getContext('2d');
     var values = $(ctx.canvas).data('values').split('|');
     var labels = $(ctx.canvas).data('labels').split('|');
-    console.log(labels);
+    // console.log(labels);
     var chart = new Chart(ctx, {
         // The type of chart we want to create
         type: 'horizontalBar',
@@ -119,17 +199,21 @@ var chartBuilder = function() {
 
         // Configuration options go here
         options: {
+          tooltips: defaultTooltips,
           layout: defaultLayout,
           responsive: true,
-          maintainAspectRatio: true,
+          maintainAspectRatio: false,
           legend:{ display: false },
           scales: {
             yAxes: [{
+              barPercentage: 0.9,
+              categoryPercentage: 0.9,
                 ticks: {
                     beginAtZero: true
                 },
             }],
             xAxes: [{
+              
               scaleLabel:{
                   display:false
               },

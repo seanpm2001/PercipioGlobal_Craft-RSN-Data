@@ -25,6 +25,7 @@
 {%- set selectedNavItem = 'dashboard' -%}
 {%- set selectedSite = craft.app.request.getQueryParam('site')|default('main') -%}
 {%- set selectedTime = craft.app.request.getQueryParam('time')|default('6') -%}
+{%- set eventSite = selectedSite -%}
 {%- set uri = craft.app.request.fullPath() -%}
 
 {# any header buttons #}
@@ -46,35 +47,47 @@
 
 {%- set content -%}
 
-    <div class="relative flex flex-row justify-between flex-wrap">
-
-    {%- set currentYear = "now"|date("Y") -%}
-    {%- set previousYear = "now"|date("Y")-1 -%}
+    {%- set currentYear = 'now'|date('Y') -%}
+    {%- set previousYear = 'now'|date('Y')-1 -%}
+    {%- set end = date('now')|atom -%}
 
     {%- switch selectedTime -%}
-        {%- case "12" -%}
-            {%- set start = date('12 months ago')|atom -%}
-            {%- set end = date('now')|atom -%}
+        {%- case '*' -%}
+            {%- set start = date('january 01 2020')|atom -%}
+            {%- set selectedTime = 'now'|date('n') -%}
+        {%- case '6' -%}
+            {%- set start = date('-6 months')|atom -%}
+        {%- case '12' -%}
+            {%- set start = date('-12 months')|atom -%}
         {%- case currentYear -%}
-            {%- set start = date('first day of this year')|atom -%}
-            {%- set end = date('now')|atom -%}
+            {%- set start = date('this year january 01')|atom -%}
+            {%- set selectedTime = 'now'|date('n') -%}
         {%- case previousYear -%}
-            {%- set start = date('first day of last year')|atom -%}
-            {%- set end = date('last day of last year')|atom -%}
+            {%- set start = date('last year january 01')|atom -%}
+            {%- set end = date('last year december 31')|atom -%}
+            {%- set selectedTime = '12' -%}
         {%- default -%}
-            {%- set start = date('6 months ago')|atom -%}
-            {%- set end = date('now')|atom -%}
+            {%- set start = date('-6 months')|atom -%}
     {%- endswitch -%}
 
+    {%- if eventSite == 'main' -%}
+        {%- set eventSite = '*' -%}
+    {%- endif -%}
+
+    <span class="text-normal text-center block tracking-tight w-100 block mt-0 mb-3">
+        Showing data from <b>{{ start|date('F, d Y ') }}</b> to <b>{{ end|date('F, d Y ') }}</b>
+    </span>
+    <div class="relative flex flex-row justify-between flex-wrap">
     {%- set events = craft.entries.section('events')
-        .site(selectedSite)
-        .dateCreated(['and', ">= #{start}", "< #{end}"])
+        .site(eventSite)
+        .postDate(['and', ">= #{start}", "< #{end}"])
         .anyStatus()
         .all()
     -%}
 
     {%- set allData = [] -%}
     {%- set allSupport = [] -%}
+    {%- set count = 0 -%}
 
     {%- for event in events -%}
     
@@ -86,6 +99,7 @@
         {%- if event.dataEngagement is iterable and (event.dataEngagement.data is not null and event.dataEngagement.data is iterable) -%}
             {%- set dataEngagement = event.dataEngagement.data -%}
             {%- set allData = dataEngagement|merge(allData) -%}
+            {%- set count = count + 1 -%}
         {%- endif -%}
 
         {%- if event.dataEngagement is iterable and (event.dataEngagement.support is not null and event.dataEngagement.support is iterable) -%}
@@ -96,9 +110,9 @@
         {%- if loop.last and allData is not empty -%}
 
             {%- set totalSchools = totalSchools(allData) -%}
-            {%- set avgSchools = avgSchools(allData, loop.length) -%}
+            {%- set avgSchools = avgSchools(allData, count) -%}
             {%- set totalAttendees = totalAttendees(allData) -%}
-            {%- set avgAttendees = avgAttendees(allData, loop.length) -%}
+            {%- set avgAttendees = avgAttendees(allData, count) -%}
             {%- set totalDays = totalDays(allData) -%}
             {%- set totalEngaged = totalEngaged(allData) -%}
             {%- set totalSustained = totalSustained(allData) -%}
@@ -113,7 +127,7 @@
                             <div class="body">
                                 <span class="text-5xl text-center block my-6 tracking-tight font-semibold">
                                     {{ loop.index|number_format }}</span>
-                                <p>Average <b>{{ (loop.index/selectedTime)|number_format }}</b> training events per month.</p>
+                                <p class="text-center text-sm">Avg. <b>{{ (count/selectedTime)|number_format }}</b> trainings per month.</p>
                             </div>
                         </div>
                     </div>
@@ -129,7 +143,7 @@
                             <div class="body">
                                 <span class="text-5xl text-center block my-6 tracking-tight font-semibold">
                                     {{ totalAttendees|number_format }}</span>
-                                <p>Average <b>{{ avgAttendees|number_format }}</b> attendees per training.</p>
+                                <p class="text-center text-sm">Avg. <b>{{ avgAttendees|number_format }}</b> attendees per training.</p>
                             </div>
                         </div>
                     </div>
@@ -146,7 +160,7 @@
                                 <span class="text-5xl text-center block my-6 tracking-tight font-semibold">
                                     {{ totalSchools|number_format }}    
                                 </span>
-                                <p>Average <b>{{ avgSchools|number_format }}</b> schools per training.</p>
+                                <p class="text-center text-sm">Avg. <b>{{ avgSchools|number_format }}</b> schools per training.</p>
                             </div>
                         </div>
                     </div>
@@ -163,7 +177,7 @@
                                 <span class="text-5xl text-center block my-6 tracking-tight font-semibold">
                                     {{ totalDays|number_format }} 
                                 </span>
-                                <p>Average {{ (totalDays / totalAttendees)|number_format(1) }} days per attendee.</p>
+                                <p class="text-center text-sm">Avg. <b>{{ (totalDays / totalAttendees)|number_format(1) }}</b> days per attendee.</p>
                             </div>
                         </div>
                     </div>
@@ -183,7 +197,7 @@
                                         data-sustained="{{ totalSustained }}"
                                         data-embedded="{{ totalEmbedded }}">
                                 </canvas>
-                                <p>Showing the split of engangement levels accross all events in this time period.</p>
+                                <p class="text-center text-sm">Showing the split of engangement levels accross all events in this time period.</p>
                             </div>
                         </div>
                     </div>
@@ -215,14 +229,15 @@
                         <div class="widget-heading">
                             <h2 class="text-lg font-bold">Follow on support offered</h2>
                             <h6 class="text-xs uppercase" data-time-set>Last 12 months</h6>
-                            <div class="body">
+                            <div class="body relative">
                                 <canvas 
-                                    id="chart-followOnSupport" 
+                                    id="chart-followOnSupport"
                                     class="chart-js"
+                                    style="max-height: 600px;"
                                     data-labels="{%- for key in followOnSupportCats|keys -%}{{ key }}{{ not loop.last ? '|' }}{%- endfor -%}"
                                     data-values="{%- for value in followOnSupportCats -%}{{ value }}{{ not loop.last ? '|' }}{%- endfor -%}">
                                 </canvas>
-                                <p>Showing what types of follow on support have been offered.</p>
+                                <p class="text-center text-sm">Showing what types of follow on support have been offered.</p>
                             </div>
                         </div>
                     </div>
@@ -245,8 +260,51 @@
                 </div>
             </div>
         {%- endif -%}
-  
+
+        {%- if loop.last and allData is not empty -%}
+        <div class="widget inline-flex p-1 w-full">
+                <div class="front w-full">
+                    <div class="pane">
+                        <div class="widget-heading">
+                            <h2 class="text-lg font-bold">Engagement Data Completion</h2>
+                            <h6 class="text-xs uppercase" data-time-set>Last 12 months</h6>
+                            <div class="body relative">
+                                <canvas id="chart-engagementCompletion" 
+                                        class="chart-js"
+                                        style="max-height: 140px;"
+                                        data-count="{{ (count / loop.index * 100)|number_format(2) }}"
+                                        data-total-count="{{ 100-(count / loop.index * 100)|number_format(2) }}">
+                                </canvas>
+                                <p class="text-center text-sm"><b>{{ loop.index }}</b> total training events. <b>{{ count}}</b> (<em>{{ (count / loop.index * 100)|number_format(2) }}%</em>) have engagement data.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {%- endif -%}
 
 {%- endfor -%}
+
+{%- if events|length == 0 -%}
+    <div class="widget inline-flex p-1 w-full">
+        <div class="front w-full">
+            <div class="pane">
+                <div class="widget-heading">
+                    <h2 class="text-lg font-bold">No training events found</h2>
+                    <h6 class="text-xs uppercase" data-time-set>Last 12 months</h6>
+                    <div class="body relative">
+                        <canvas id="chart-engagementCompletion" 
+                                class="chart-js"
+                                style="max-height: 140px;"
+                                data-count="0"
+                                data-total-count="100">
+                        </canvas>
+                        <p class="text-center text-sm"><b>0</b> total training events.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+{%- endif -%}
 {%- endset -%}

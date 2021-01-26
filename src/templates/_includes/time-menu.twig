@@ -2,6 +2,14 @@
 {% set activeTime = 0 %}
 {% set times = [
     {
+        'value': "now"|date("Y"),
+        'label': 'Current Year (' ~ "now"|date("Y") ~')'
+    },
+    {
+        'value': ("now"|date("Y") - 1),
+        'label': 'Previous Year (' ~ ("now"|date("Y") - 1) ~')'
+    },
+    {
         'value': '6',
         'label': 'Last 6 months'
     },
@@ -10,13 +18,10 @@
         'label': 'Last 12 months'
     },
     {
-        'value': "now"|date("Y"),
-        'label': 'Current Year (' ~ "now"|date("Y") ~')'
-    },
-    {
-        'value': ("now"|date("Y") - 1),
-        'label': 'Previous Year (' ~ ("now"|date("Y") - 1) ~')'
+        'value': '*',
+        'label': 'All time'
     }
+    
 ] %}
 
 {% set activeTime = 0 %}
@@ -38,7 +43,6 @@
                 {{ time.label }}
             </a>
         </li>
-               
         {% endfor %}
     </ul>
 </div>
