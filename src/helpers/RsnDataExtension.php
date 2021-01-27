@@ -16,7 +16,7 @@ use Twig\TwigFilter;
 
 use Craft;
 
-class rsnDataExtension extends AbstractExtension
+class RsnDataExtension extends AbstractExtension
 {
 
     public function getFunctions()

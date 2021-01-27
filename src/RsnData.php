@@ -108,7 +108,7 @@ class RsnData extends Plugin
 
         if (Craft::$app->request->getIsCpRequest()) {
             // Add in our Twig extension
-            $rsnDataExtension = new rsnDataExtension();
+            $rsnDataExtension = new RsnDataExtension();
             Craft::$app->view->registerTwigExtension($rsnDataExtension);
         }
 
