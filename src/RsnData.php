@@ -14,7 +14,7 @@ use percipioglobal\rsndata\services\RsnDataService as RsnDataServiceService;
 use percipioglobal\rsndata\models\Settings;
 use percipioglobal\rsndata\fields\RsnDataField as RsnDataFieldField;
 use percipioglobal\rsndata\widgets\DataEngagement as DataEngagementWidget;
-use percipioglobal\rsndata\helpers\rsnDataExtension; 
+use percipioglobal\rsndata\helpers\RsnDataExtension; 
 
 
 use Craft;

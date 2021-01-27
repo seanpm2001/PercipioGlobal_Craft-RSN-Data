@@ -174,6 +174,4 @@ class rsnDataExtension extends AbstractExtension
 
         return $remappedArray;
     }
-
 }
-
