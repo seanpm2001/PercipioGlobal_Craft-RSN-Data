@@ -25,6 +25,7 @@
 {%- set selectedNavItem = 'dashboard' -%}
 {%- set selectedSite = craft.app.request.getQueryParam('site')|default('main') -%}
 {%- set selectedTime = craft.app.request.getQueryParam('time')|default('6') -%}
+{%- set monthCount = selectedTime -%}
 {%- set eventSite = selectedSite -%}
 {%- set uri = craft.app.request.fullPath() -%}
 
@@ -52,20 +53,21 @@
     {%- set end = date('now')|atom -%}
 
     {%- switch selectedTime -%}
-        {%- case '*' -%}
-            {%- set start = date('january 01 2020')|atom -%}
+        {%- case '1' -%}
+            {%- set start = date('january 01 2019')|atom -%}
             {%- set selectedTime = 'now'|date('n') -%}
+            {%- set monthCount = '24' -%}
         {%- case '6' -%}
             {%- set start = date('-6 months')|atom -%}
         {%- case '12' -%}
             {%- set start = date('-12 months')|atom -%}
         {%- case currentYear -%}
             {%- set start = date('this year january 01')|atom -%}
-            {%- set selectedTime = 'now'|date('n') -%}
+            {%- set monthCount = 'now'|date('n') -%}
         {%- case previousYear -%}
             {%- set start = date('last year january 01')|atom -%}
             {%- set end = date('last year december 31')|atom -%}
-            {%- set selectedTime = '12' -%}
+            {%- set monthCount = '12' -%}
         {%- default -%}
             {%- set start = date('-6 months')|atom -%}
     {%- endswitch -%}
@@ -127,7 +129,7 @@
                             <div class="body">
                                 <span class="text-5xl text-center block my-6 tracking-tight font-semibold">
                                     {{ loop.index|number_format }}</span>
-                                <p class="text-center text-sm">Avg. <b>{{ (count/selectedTime)|number_format }}</b> trainings per month.</p>
+                                <p class="text-center text-sm">Avg. <b>{{ (count/monthCount)|number_format }}</b> trainings per month.</p>
                             </div>
                         </div>
                     </div>

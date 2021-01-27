@@ -18,7 +18,7 @@
         'label': 'Last 12 months'
     },
     {
-        'value': '*',
+        'value': '1',
         'label': 'All time'
     }
     
@@ -40,7 +40,7 @@
         {% set url = baseUrl ~ '?site=' ~ selectedSite ~ '&time=' ~ time.value %}
         <li>
             <a href="{{ url }}" title="{{ time.value }}">
-                {{ time.label }}
+                <div class="status {% if time.value == selectedTime %} enabled{%  endif %}"></div>{{ time.label }}
             </a>
         </li>
         {% endfor %}
