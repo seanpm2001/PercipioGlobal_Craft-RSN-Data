@@ -27,7 +27,7 @@
 {# any header buttons #}
 {% block actionButton %}
         {% include "rsn-data/_includes/sites-menu.twig" with {
-            baseUrl: '/admin/rsn-data/' ~ selectedNavItem,
+            baseUrl: '/cp/rsn-data/' ~ selectedNavItem,
             currentSiteId: currentSite.id,
             currentSiteHandle: currentSite.handle,
             currentSiteName:  currentSite.name
@@ -109,7 +109,7 @@
                     <span class="status {{ eventEnabled }}"></span>
                     <div class="label">
                         <span class="title">
-                            <a href="/admin/entries/pages/{{event.id}}-events?site={{selectedSite}}#tab-data-engagement">{{ event.title }}</a>
+                            <a href="/cp/entries/pages/{{event.id}}-events?site={{selectedSite}}#tab-data-engagement">{{ event.title }}</a>
                         </span>
                     </div>
                 </div>

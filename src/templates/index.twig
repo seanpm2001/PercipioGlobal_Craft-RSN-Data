@@ -33,14 +33,14 @@
 {%- block actionButton -%}
 
         {%- include "rsn-data/_includes/sites-menu.twig" with {
-            baseUrl: '/admin/rsn-data/',
+            baseUrl: '/cp/rsn-data/',
             currentSiteId: currentSite.id,
             currentSiteHandle: currentSite.handle,
             currentSiteName:  currentSite.name
         } -%}
 
         {%- include "rsn-data/_includes/time-menu.twig" with {
-            baseUrl: '/admin/rsn-data/',
+            baseUrl: '/cp/rsn-data/',
             selectedTime: selectedTime
         } -%}
 
