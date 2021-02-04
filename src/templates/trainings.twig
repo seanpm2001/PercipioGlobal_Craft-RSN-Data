@@ -40,9 +40,9 @@
    <table class="data fullwidth">
     <thead>
         <tr>
-            <th scope="col" data-attribute="title" class="ordered desc" style="width:35%">Training</th>
+            <th scope="col" data-attribute="title" class="orderable" style="width:35%">Training</th>
             <th scope="col" data-attribute="category" class="orderable">Type</th>
-            <th scope="col" data-attribute="eventDate" class="orderable">Event Date</th>
+            <th scope="col" data-attribute="eventDate" class="ordered desc">Event Date</th>
             <th scope="col" data-attribute="attendees" class="orderable">Attendees</th>
             <th scope="col" data-attribute="engagement" class="orderable">Engagement</th>
         </tr>
@@ -66,7 +66,7 @@
         
         {% set eventDate = eventTimetable.startDateTime ?? '' %}
         {% if eventDate %}
-            {% set eventDate = eventTimetable.startDateTime|date('d/n/Y, ') ~ eventTimetable.startTime|date('H:i') %}
+            {% set eventDate = eventTimetable.startDateTime|date('d/n/Y - ') ~ eventTimetable.startTime|date('H:i') %}
         {% endif %}
 
         {% set dataEngagement = null %}

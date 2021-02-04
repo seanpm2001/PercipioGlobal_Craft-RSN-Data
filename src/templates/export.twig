@@ -12,48 +12,138 @@
  * @since     1.0.0
  */
 #}
-{% extends "rsn-data/layouts/_cp" %}
+{%- extends "rsn-data/layouts/_cp" -%}
 
-{% import "_includes/forms" as forms %}
+{%- import "_includes/forms" as forms -%}
 
-{% do view.registerAssetBundle("percipioglobal\\rsndata\\assetbundles\\rsndata\\RsnDataAsset") %}
-{% do view.registerAssetBundle("percipioglobal\\rsndata\\assetbundles\\indexcpsection\\IndexCPSectionAsset") %}
+{%- do view.registerAssetBundle("percipioglobal\\rsndata\\assetbundles\\rsndata\\RsnDataAsset") -%}
+{%- do view.registerAssetBundle("percipioglobal\\rsndata\\assetbundles\\indexcpsection\\IndexCPSectionAsset") -%}
 
 {# The title of this CP section #}
-{% set title = "Export Data"|t('rsn-data') %}
-{% set selectedNavItem = 'export' %}
-{% set selectedSite = craft.app.request.getQueryParam('site')|default('main') %}
+{%- set title = "Export Data"|t('rsn-data') -%}
+{%- set selectedNavItem = 'export' -%}
+{%- set selectedSite = craft.app.request.getQueryParam('site')|default('main') -%}
+{%- set selectedTime = craft.app.request.getQueryParam('time')|default('6') -%}
+{%- set selectedSchools = craft.app.request.getQueryParam('p')|default('') -%}
+{%- set eventSite = selectedSite -%}
+{%- set uri = craft.app.request.fullPath() -%}
 
 {# any header buttons #}
-{% block actionButton %}
-        {% include "rsn-data/_includes/sites-menu.twig" with {
-        baseUrl: '/cp/rsn-data/' ~ selectedNavItem,
-        currentSiteId: currentSite.id,
-        currentSiteHandle: currentSite.handle,
-        currentSiteName:  currentSite.name
-    } %}
+{%- block actionButton -%}
 
-<div class="input ltr">
-    <div class="select js-select">
-        <select id="data-school-set" name="">
-            <option value="schools-all" selected>All Schools</option>
-        </select>
-    </div>
-</div>
-<div class="input ltr">
-    <div class="select js-select">
-        <select id="data-time-set" name="Time Period">
-            <optgroup label="Time">
-                <option value="12-months" selected>All time</option>
-            </optgroup>
-        </select>
-    </div>
-</div>
-{% endblock %}
+        {%- include "rsn-data/_includes/sites-menu.twig" with {
+            baseUrl: '/cp/rsn-data/' ~ selectedNavItem,
+            currentSiteId: currentSite.id,
+            currentSiteHandle: currentSite.handle,
+            currentSiteName:  currentSite.name
+        } -%}
 
-{% set content %}
-    <h2>{{ title }}</h2>
-    <p>
-        <a href="https://api.v2.metaseed.io/export/{{ selectedSite }}-all-schools-all-time.csv?auth=rsn-staging&token=kPX2asGX5ZI8yebN33zBKbN33zBKZZkPX2asGX5ZI8" target="blank" class="btn submit">Export CSV</a>
-    </p>
-{% endset %}
+        {%- include "rsn-data/_includes/schools-menu.twig" with {
+            baseUrl: '/cp/rsn-data/' ~ selectedNavItem,
+            selectedTime: selectedSchools
+        } -%}
+        
+        {%- include "rsn-data/_includes/time-menu.twig" with {
+            baseUrl: '/cp/rsn-data/' ~ selectedNavItem,
+            selectedTime: selectedTime
+        } -%}
+
+{%- endblock -%}
+
+
+{%- set content -%}
+    <h2 class="text-lg font-bold leading-5 mb-1">{{ title }} </h2>
+    <p class="py-2">Exporting <b data-schools-set>all school data</b> for period: <b data-time-set>Last 6 months</b></p>
+    
+
+    {%- set currentYear = 'now'|date('Y') -%}
+    {%- set previousYear = 'now'|date('Y')-1 -%}
+    {%- set end = date('now')|atom -%}
+
+    {%- switch selectedTime -%}
+        {%- case '1' -%}
+            {%- set start = date('january 01 2019')|atom -%}
+            {%- set selectedTime = 'now'|date('n') -%}
+        {%- case '6' -%}
+            {%- set start = date('-6 months')|atom -%}
+        {%- case '12' -%}
+            {%- set start = date('-12 months')|atom -%}
+        {%- case currentYear -%}
+            {%- set start = date('this year january 01')|atom -%}
+        {%- case previousYear -%}
+            {%- set start = date('last year january 01')|atom -%}
+            {%- set end = date('last year december 31')|atom -%}
+        {%- default -%}
+            {%- set start = date('-6 months')|atom -%}
+    {%- endswitch -%}
+
+    {%- if eventSite == 'main' -%}
+        {%- set eventSite = '*' -%}
+    {%- endif -%}
+
+    {%- set events = craft.entries.section('events')
+        .site(eventSite)
+        .postDate(['and', ">= #{start}", "< #{end}"])
+        .anyStatus()
+        .all()
+    -%}
+
+    {%- set allData = [] -%}
+
+    {%- for event in events -%}
+    
+        {%- set dataEngagement = null -%}
+
+        {%- if event.dataEngagement is iterable and (event.dataEngagement.data is not null and event.dataEngagement.data is iterable) -%}
+            {%- set dataEngagement = event.dataEngagement.data -%}
+            {%- set allData = dataEngagement|merge(allData) -%}
+        {%- endif -%}
+
+        {%- if loop.last and allData is not empty -%}
+
+        <form method="post" action="https://api.v2.metaseed.io/export/">
+            <input type="hidden" name="rsn" value="{{ selectedSite }}"/>
+            <input type="hidden" name="priority" value="{{ selectedSchools }}"/>
+            <input type="hidden" name="start" value="{{ start }}"/>
+            <input type="hidden" name="end" value="{{ end }}"/>
+            <input type="hidden" name="data" value="{{ allData|json_encode }}"/>
+            <input class="mt-2 btn submit" type="submit" value="Export CSV"/>
+        </form>
+            
+        {%- endif -%}
+
+        {%- if loop.last and allData|length == '0' -%}
+            <div class="widget inline-flex p-1 w-full">
+                <div class="front w-full">
+                    <div class="pane relative">
+                        <div class="widget-heading">
+                            <h2 class="text-lg font-bold">No export data found</h2>
+                            <h6 class="text-xs uppercase" data-time-set>Last 12 months</h6>
+                            <div class="body mt-4">
+                                <p>No engagement data has been found for this Research School.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {%- endif -%}
+
+{%- endfor -%}
+
+{%- if events|length == 0 -%}
+    <div class="widget inline-flex p-1 w-full">
+        <div class="front w-full">
+            <div class="pane">
+                <div class="widget-heading">
+                    <h2 class="text-lg font-bold">No export data found</h2>
+                    <h6 class="text-xs uppercase" data-time-set>Last 12 months</h6>
+                    <div class="body mt-4">
+                        <p>No engagement data has been found for this Research School.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{%- endif -%}
+
+{%- endset -%}

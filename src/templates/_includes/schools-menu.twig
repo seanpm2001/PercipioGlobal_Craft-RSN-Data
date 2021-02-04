@@ -1,0 +1,36 @@
+{% import "_includes/forms" as forms %}
+{% set activeSchools = 0 %}
+{% set schools = [
+    {
+        'value': 0,
+        'label': 'All Schools'
+    },
+    {
+        'value': 1,
+        'label': 'Priority Schools'
+    }
+    
+] %}
+
+{% set activeSchools = 0 %}
+{% for school in schools %}
+    {%  if school.value == selectedSchools %}
+        {%  set activeSchools = 1 %}
+        <div id="schools-btn" class="btn menubtn ml-4" data-icon="users" data-school="{{ school.label }}">{{ school.label }}</div>
+    {%  endif %}
+{% endfor %}
+{%  if activeSchools == 0 %}
+    <div id="schools-btn" class="btn menubtn ml-4" data-icon="users">All Schools</div>
+{%  endif %}
+<div class="menu">
+    <ul class="padded">
+        {% for school in schools %}
+        {% set url = baseUrl ~ '?site=' ~ selectedSite ~ '&time=' ~ selectedTime ~ '&p=' ~ school.value %}
+        <li>
+            <a href="{{ url }}" title="{{ school.value }}">
+                <div class="status {% if school.value == selectedTime %} enabled{%  endif %}"></div>{{ school.label }}
+            </a>
+        </li>
+        {% endfor %}
+    </ul>
+</div>

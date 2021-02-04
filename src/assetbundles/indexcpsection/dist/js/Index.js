@@ -23,6 +23,9 @@ var rsnInit = function() {
 var timeset = $('#time-btn').data('time');
 $('[data-time-set]').text(timeset);
 
+var schoolsset = $('#schools-btn').data('school');
+$('[data-schools-set]').text(schoolsset);
+
 // reusable chart data options
 function optionsEngaged($count) {
   return {
