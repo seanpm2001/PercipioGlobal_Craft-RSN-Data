@@ -38,6 +38,7 @@ class RsnDataModel extends Model
      * @var string
      */
     public $googleApiKey = '';
+    public $metaseedUrl = '';
 
     // Public Methods
     // =========================================================================
@@ -57,6 +58,8 @@ class RsnDataModel extends Model
         return [
             ['googleApiKey', 'string'],
             ['googleApiKey', 'default', 'value' => ''],
+            ['metaseedUrl', 'string'],
+            ['metaseedUrl', 'default', 'value' => ''],
         ];
     }
 }

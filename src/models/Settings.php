@@ -40,6 +40,7 @@ class Settings extends Model
      * @var string
      */
     public $googleApiKey = '';
+    public $metaseedUrl = '';
 
     // Public Methods
     // =========================================================================
@@ -59,6 +60,8 @@ class Settings extends Model
         return [
             ['googleApiKey', 'string'],
             ['googleApiKey', 'default', 'value' => ''],
+            ['metaseedUrl', 'string'],
+            ['metaseedUrl', 'default', 'value' => ''],
         ];
     }
 }

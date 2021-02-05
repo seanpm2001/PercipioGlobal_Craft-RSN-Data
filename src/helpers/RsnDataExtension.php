@@ -58,6 +58,10 @@ class RsnDataExtension extends AbstractExtension
                 $this,
                 'followOnSupport'
             )) ,
+            new \Twig\TwigFunction('fetchUrns', array(
+                $this,
+                'fetchUrns'
+            )) ,
         );
 
     }
@@ -174,4 +178,17 @@ class RsnDataExtension extends AbstractExtension
 
         return $remappedArray;
     }
+
+    public function fetchUrns($array)
+    {
+        $array = array_merge($array);
+        $array = array_unique(array_column($array, 'schooldata'));
+        $array = array_filter($array, 'is_numeric');
+        // print_r($array);
+        $array = implode('|',$array);
+
+        return $array;
+    }
+
+
 }

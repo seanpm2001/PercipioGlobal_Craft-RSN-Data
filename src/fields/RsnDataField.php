@@ -44,6 +44,7 @@ class RsnDataField extends Field
      * @var string
      */
     public $googleApiKey = '';
+    public $metaseedUrl = '';
 
     // Static Methods
     // =========================================================================
