@@ -15,9 +15,9 @@ var rsnInit = function() {
     if ($('.chart-js').length) {
         chartBuilder();
     }
-    if ($('.map-js').length) {
-        initMap();
-    }
+    // if ($('.map-js').length) {
+    //     initMap();
+    // }
 }
 
 var timeset = $('#time-btn').data('time');
@@ -147,8 +147,8 @@ var chartBuilder = function() {
         data: {
             labels: ['Engagement Level'],
             datasets: [
-              optionsEngaged($(ctx.canvas).data('engaged')), 
-              optionsSustained($(ctx.canvas).data('sustained')), 
+              optionsEngaged($(ctx.canvas).data('engaged')),
+              optionsSustained($(ctx.canvas).data('sustained')),
               optionsEmbedded($(ctx.canvas).data('embedded')),
             ]
         },
@@ -181,7 +181,7 @@ var chartBuilder = function() {
           }
       });
 
-    // Follow on Support 
+    // Follow on Support
     var ctx = document.getElementById('chart-followOnSupport').getContext('2d');
     var values = $(ctx.canvas).data('values').split('|');
     var labels = $(ctx.canvas).data('labels').split('|');
@@ -216,7 +216,7 @@ var chartBuilder = function() {
                 },
             }],
             xAxes: [{
-              
+
               scaleLabel:{
                   display:false
               },
@@ -247,7 +247,7 @@ function initMap() {
 
     var jsonData = {
   "data": [
-    
+
   ]
 }
 

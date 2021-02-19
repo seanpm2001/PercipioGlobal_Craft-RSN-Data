@@ -44,9 +44,9 @@ class IndexCPSectionAsset extends AssetBundle
     {
         // define the path that your publishable resources live
         $this->sourcePath = "@percipioglobal/rsndata/assetbundles/indexcpsection/dist";
-        $googleApiKey = '';
-        $metaseedUrl = '';
-        
+        // $googleApiKey = '';
+        // $metaseedUrl = '';
+
         // define the dependencies
         $this->depends = [
             CpAsset::class,
@@ -56,10 +56,10 @@ class IndexCPSectionAsset extends AssetBundle
         // when this asset bundle is registered
         $this->js = [
             'https://cdn.jsdelivr.net/npm/chart.js@2.8.0',
-            'https://maps.googleapis.com/maps/api/js?v=3.42&key='.$googleApiKey,
             'js/Index.js',
 
         ];
+        // 'https://maps.googleapis.com/maps/api/js?v=3.42&key='.$googleApiKey,
 
         $this->css = [
             'css/tailwind.min.css',
