@@ -29,7 +29,7 @@
 {%- set eventSite = selectedSite -%}
 {%- set markers = null -%}
 {%- set uri = craft.app.request.fullPath() -%}
-{%- set googleApiKey = craft.app.plugins.getPlugin('rsn-data').settings.googleApiKey -%}
+{%- set googleApiKey = craft.app.plugins.getPlugin('rsn-data').getSettings().getGoogleApiKey() -%}
 
 {# any header buttons #}
 {%- block actionButton -%}
