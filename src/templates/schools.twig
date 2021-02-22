@@ -23,13 +23,13 @@
 {# The title of this CP section #}
 {%- set title = "Schools"|t('rsn-data') -%}
 {%- set selectedNavItem = 'schools' -%}
+{%- set metaseedUrl = craft.app.plugins.getPlugin('rsn-data').settings.metaseedUrl -%}
 {%- set selectedSite = craft.app.request.getQueryParam('site')|default('main') -%}
 {%- set selectedTime = craft.app.request.getQueryParam('time')|default('6') -%}
 {%- set selectedSchools = craft.app.request.getQueryParam('p')|default('0') -%}
 {%- set eventSite = selectedSite -%}
 {%- set markers = null -%}
 {%- set uri = craft.app.request.fullPath() -%}
-{%- set googleApiKey = craft.app.plugins.getPlugin('rsn-data').settings.googleApiKey -%}
 
 {# any header buttons #}
 {%- block actionButton -%}
@@ -103,14 +103,10 @@
 
         {%- if loop.last and allData is not empty -%}
 
-        {%- set markers = fetchUrns(allData) -%}
+        {%- set markers = fetchGeo(allData, selectedSchools, metaseedUrl) -%}
 
         <div id="engagementMap"
             class="map-js mt-2"
-            data-key="{{ googleApiKey }}"
-            data-lat="53.780582"
-            data-lng="-1.757185"
-            data-school="{{ selectedSite }}"
             data-markers="{{ markers }}"
         ></div>
 

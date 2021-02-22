@@ -231,32 +231,20 @@ var chartBuilder = function() {
 };
 
 
+
+
 // Initialize and add the map
 function initMap() {
 
     // The location of RSN
     var mapContainer = $('#engagementMap'),
-    schoolLat = parseFloat(mapContainer.attr('data-lat')),
-    schoolLng = parseFloat(mapContainer.attr('data-lng')),
-    school = mapContainer.attr('data-school');
+        json = JSON.parse(mapContainer.attr('data-markers'));
+        console.log(json);
 
-    const rs = {
-        lat: schoolLat,
-        lng: schoolLng
-    };
-
-    var jsonData = {
-  "data": [
-    
-  ]
-}
-
-        var locations = jsonData.data;
-       // console.log(locations);
 
         var map = new google.maps.Map(document.getElementById('engagementMap'), {
-            zoom: 9,
-            center: rs,
+            zoom: 7,
+            center: new google.maps.LatLng(53,-1.7),
             scrollwheel: false,
             streetViewControl: false,
             rotateControl: false,
@@ -264,52 +252,34 @@ function initMap() {
             mapTypeControl: false
         });
 
-        var infowindow = new google.maps.InfoWindow();
-        var geocoder = new google.maps.Geocoder();
         var bounds = new google.maps.LatLngBounds();
-        var marker, i;
 
-
-       // console.log(locations.length);
-        var limit = 10;
-        for (i = 0; i < locations.length; i++) {
-            codeAddress(locations[i]);
-        }
-
-        function codeAddress(location) {
-
-            geocoder.geocode({
-                'address': location.postcode
-            }, function (results, status) {
-                if (status == google.maps.GeocoderStatus.OK) {
-                    map.setCenter(results[0].geometry.location);
-                    var marker = new google.maps.Marker({
-                        map: map,
-                        title: location[2],
-                        url: locations[3],
-                        position: results[0].geometry.location
-                    });
-
-                  //  console.log( marker);
-                    bounds.extend(marker.getPosition());
-                    map.fitBounds(bounds);
-
-                    google.maps.event.addListener(marker, 'click', (function (marker, location) {
-                        return function () {
-                            infowindow.setContent(location.school);
-                            infowindow.open(map, marker);
-                        };
-                    })(marker, location));
-                } else if (status === google.maps.GeocoderStatus.OVER_QUERY_LIMIT) {
-                    setTimeout(function() {
-                        codeAddress(location);
-                    }, 200);
-                }
-                else {
-                    console.log("Geocode was not successful for the following reason: " + status);
-                }
+        // Looping through the JSON data
+        for (var i = 0, length = json.length; i < length; i++) {
+          var data = json[i],
+            latLng = new google.maps.LatLng(data.latitude, data.longitude);
+            // Creating a marker and putting it on the map
+            var marker = new google.maps.Marker({
+              position: latLng,
+              map: map,
+              title: data.urn
             });
+            
+            (function(marker, data) {
+
+            // Attaching a click event to the current marker
+            google.maps.event.addListener(marker, "click", function(e) {
+              infoWindow.setContent(data.urn);
+              infoWindow.open(map, marker);
+            });
+
+
+          })(marker, data);
+
         }
-}
+
+
+      }
+
 
 rsnInit();
