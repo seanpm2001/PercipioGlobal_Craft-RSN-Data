@@ -17,18 +17,21 @@
 
 {% do view.registerAssetBundle("percipioglobal\\rsndata\\assetbundles\\rsndata\\RsnDataAsset") %}
 
-{{ forms.textField({
-    label: 'Google Maps API key',
-    instructions: 'Add the full API key registered with Google: https://console.cloud.google.com/apis/credentials/key/',
-    id: 'googleApiKey',
-    name: 'googleApiKey',
-    value: settings['googleApiKey']})
-}}
+<div class="settings">
+    {{ forms.autosuggestField({
+        label: 'Google Maps API key',
+        instructions: 'Add the full API key registered with Google: https://console.cloud.google.com/apis/credentials/key/',
+        id: 'googleApiKey',
+        name: 'googleApiKey',
+        suggestEnvVars: true,
+        value: settings['googleApiKey']})
+    }}
 
-{{ forms.textField({
-    label: 'Schools API url',
-    instructions: 'Add the API url here',
-    id: 'metaseedUrl',
-    name: 'metaseedUrl',
-    value: settings['metaseedUrl']})
-}}
+    {{ forms.textField({
+        label: 'Schools API url',
+        instructions: 'Add the API url here',
+        id: 'metaseedUrl',
+        name: 'metaseedUrl',
+        value: settings['metaseedUrl']})
+    }}
+</div>
