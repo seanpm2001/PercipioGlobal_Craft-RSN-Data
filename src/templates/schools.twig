@@ -23,13 +23,14 @@
 {# The title of this CP section #}
 {%- set title = "Schools"|t('rsn-data') -%}
 {%- set selectedNavItem = 'schools' -%}
+{%- set metaseedUrl = craft.app.plugins.getPlugin('rsn-data').settings.metaseedUrl -%}
 {%- set selectedSite = craft.app.request.getQueryParam('site')|default('main') -%}
 {%- set selectedTime = craft.app.request.getQueryParam('time')|default('6') -%}
 {%- set selectedSchools = craft.app.request.getQueryParam('p')|default('0') -%}
 {%- set eventSite = selectedSite -%}
 {%- set markers = null -%}
 {%- set uri = craft.app.request.fullPath() -%}
-{%- set googleApiKey = craft.app.plugins.getPlugin('rsn-data').settings.googleApiKey -%}
+{%- set googleApiKey = craft.app.plugins.getPlugin('rsn-data').getSettings().getGoogleApiKey() -%}
 
 {# any header buttons #}
 {%- block actionButton -%}
@@ -45,7 +46,7 @@
             baseUrl: '/cp/rsn-data/' ~ selectedNavItem,
             selectedTime: selectedSchools
         } -%}
-        
+
         {%- include "rsn-data/_includes/time-menu.twig" with {
             baseUrl: '/cp/rsn-data/' ~ selectedNavItem,
             selectedTime: selectedTime
@@ -93,7 +94,7 @@
     {%- set allData = [] -%}
 
     {%- for event in events -%}
-    
+
         {%- set dataEngagement = null -%}
 
         {%- if event.dataEngagement is iterable and (event.dataEngagement.data is not null and event.dataEngagement.data is iterable) -%}
@@ -103,16 +104,17 @@
 
         {%- if loop.last and allData is not empty -%}
 
-        {%- set markers = fetchUrns(allData) -%}
+            {%- do view.registerJsFile("https://maps.googleapis.com/maps/api/js?v=3.42&key=" ~ googleApiKey ~ '&callback=initMap', {"async":"async"}) -%}
+            {%- set markers = fetchUrns(allData) -%}
 
-        <div id="engagementMap"
-            class="map-js mt-2"
-            data-key="{{ googleApiKey }}"
-            data-lat="53.780582"
-            data-lng="-1.757185"
-            data-school="{{ selectedSite }}"
-            data-markers="{{ markers }}"
-        ></div>
+            <div id="engagementMap"
+                class="map-js mt-2"
+                data-key="{{ googleApiKey }}"
+                data-lat="53.780582"
+                data-lng="-1.757185"
+                data-school="{{ selectedSite }}"
+                data-markers="{{ markers }}"
+            ></div>
 
         {%- endif -%}
 

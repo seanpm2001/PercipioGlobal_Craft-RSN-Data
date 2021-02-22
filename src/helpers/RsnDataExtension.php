@@ -62,6 +62,14 @@ class RsnDataExtension extends AbstractExtension
                 $this,
                 'fetchUrns'
             )) ,
+            new \Twig\TwigFunction('fetchGeo', array(
+                $this,
+                'fetchGeo'
+            )) ,
+            new \Twig\TwigFunction('fetchPriority', array(
+                $this,
+                'fetchPriority'
+            )) ,
         );
 
     }
@@ -190,5 +198,86 @@ class RsnDataExtension extends AbstractExtension
         return $array;
     }
 
+    public function fetchGeo($array, $priority, $api)
+    {
+
+        $response = null;
+        $array = array_merge($array);
+        $array = array_unique(array_column($array, 'schooldata'));
+        $array = array_filter($array, 'is_numeric');
+       
+        $url = $api.'/geoFromUrns';
+        $array = json_encode($array);
+
+        $c = curl_init();
+
+        curl_setopt($c, CURLOPT_USERAGENT,  'Mozilla/5.0 (Macintosh; Intel Mac OS X 11_1_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.150 Safari/537.36');
+        curl_setopt($c, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($c, CURLOPT_FOLLOWLOCATION, 1);
+        curl_setopt($c, CURLOPT_AUTOREFERER,    1);
+        curl_setopt($c, CURLOPT_SSL_VERIFYPEER, 0);
+
+        curl_setopt($c, CURLOPT_URL, $url );
+        curl_setopt($c, CURLOPT_REFERER, $url);
+        curl_setopt($c, CURLOPT_POST, true);
+        curl_setopt($c, CURLOPT_POSTFIELDS, [
+            "priority" => $priority,
+            "data" => $array
+        ]);
+
+        $result = curl_exec($c);
+
+        if (curl_errno($c)) {
+            $response = json_encode(curl_error($c));
+        }
+        else {
+            $response = $result;
+        }
+        curl_close($c);
+
+      //   print_r($response);
+        return $response;
+    }
+
+    public function fetchPriority($array, $api)
+    {
+
+        $response = null;
+        $array = array_merge($array);
+        $array = array_unique(array_column($array, 'schooldata'));
+        $array = array_filter($array, 'is_numeric');
+       
+        $url = $api.'/priorityFromUrns';
+        $array = json_encode($array);
+
+        $c = curl_init();
+
+        curl_setopt($c, CURLOPT_USERAGENT,  'Mozilla/5.0 (Macintosh; Intel Mac OS X 11_1_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.150 Safari/537.36');
+        curl_setopt($c, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($c, CURLOPT_FOLLOWLOCATION, 1);
+        curl_setopt($c, CURLOPT_AUTOREFERER,    1);
+        curl_setopt($c, CURLOPT_SSL_VERIFYPEER, 0);
+
+        curl_setopt($c, CURLOPT_URL, $url );
+        curl_setopt($c, CURLOPT_REFERER, $url);
+        curl_setopt($c, CURLOPT_POST, true);
+        curl_setopt($c, CURLOPT_POSTFIELDS, [
+            "data" => $array
+        ]);
+
+        $result = curl_exec($c);
+
+        if (curl_errno($c)) {
+            $response = json_encode(curl_error($c));
+        }
+        else {
+            $response = json_decode($result);
+            $response = $response[0]->count;
+        }
+        curl_close($c);
+
+      //   print_r($response);
+        return $response;
+    }
 
 }

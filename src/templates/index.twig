@@ -23,6 +23,7 @@
 {# The title of this CP section #}
 {%- set title = "Dashboard"|t('rsn-data') -%}
 {%- set selectedNavItem = 'dashboard' -%}
+{%- set metaseedUrl = craft.app.plugins.getPlugin('rsn-data').settings.metaseedUrl -%}
 {%- set selectedSite = craft.app.request.getQueryParam('site')|default('main') -%}
 {%- set selectedTime = craft.app.request.getQueryParam('time')|default('6') -%}
 {%- set monthCount = selectedTime -%}
@@ -113,6 +114,7 @@
 
             {%- set totalSchools = totalSchools(allData) -%}
             {%- set avgSchools = avgSchools(allData, count) -%}
+            {%- set totalPrioritySchools = fetchPriority(allData, metaseedUrl) -%}
             {%- set totalAttendees = totalAttendees(allData) -%}
             {%- set avgAttendees = avgAttendees(allData, count) -%}
             {%- set totalDays = totalDays(allData) -%}
@@ -160,7 +162,7 @@
                             <h6 class="text-xs uppercase" data-time-set>Last 12 months</h6>
                             <div class="body">
                                 <span class="text-5xl text-center block my-6 tracking-tight font-semibold">
-                                    {{ totalSchools|number_format }}    
+                                    {{ totalSchools|number_format }}
                                 </span>
                                 <p class="text-center text-sm">Avg. <b>{{ avgSchools|number_format }}</b> schools per training.</p>
                             </div>
@@ -173,13 +175,13 @@
                 <div class="front w-full">
                     <div class="pane h-auto l:h-72 xl:h-auto">
                         <div class="widget-heading">
-                            <h2 class="text-lg font-bold leading-5 mb-1">Total days</h2>
+                            <h2 class="text-lg font-bold leading-5 mb-1">Total priority schools</h2>
                             <h6 class="text-xs uppercase" data-time-set>Last 12 months</h6>
                             <div class="body">
                                 <span class="text-5xl text-center block my-6 tracking-tight font-semibold">
-                                    {{ totalDays|number_format }} 
+                                    {{ totalPrioritySchools|number_format }} 
                                 </span>
-                                <p class="text-center text-sm">Avg. <b>{{ (totalDays / totalAttendees)|number_format(1) }}</b> days per attendee.</p>
+                                <p class="text-center text-sm">Avg. <b>{{ ((totalPrioritySchools / totalSchools) * 100)|number_format }}%</b> priority schools per training.</p>
                             </div>
                         </div>
                     </div>
