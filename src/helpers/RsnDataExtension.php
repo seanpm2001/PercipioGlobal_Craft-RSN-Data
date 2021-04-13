@@ -22,6 +22,10 @@ class RsnDataExtension extends AbstractExtension
     public function getFunctions()
     {
         return array(
+            new \Twig\TwigFunction('arrayInsert', array(
+                $this,
+                'arrayInsert'
+            )) ,
             new \Twig\TwigFunction('totalSchools', array(
                 $this,
                 'totalSchools'
@@ -70,10 +74,26 @@ class RsnDataExtension extends AbstractExtension
                 $this,
                 'fetchPriority'
             )) ,
+            new \Twig\TwigFunction('sortEvents', array(
+                $this,
+                'sortEvents'
+            )) ,
         );
 
     }
 
+    function arrayInsert($info, $arrayLoop)
+    {
+        $array = array();
+
+        foreach($arrayLoop as $arrayItem){
+            $array[] = array_merge($info['info'], $arrayItem);
+        }
+
+        return($array);
+
+    }
+    
     function getPercentage($amount, $total)
     {
         return ($amount / $total) * 100;
@@ -242,7 +262,7 @@ class RsnDataExtension extends AbstractExtension
     public function fetchPriority($array, $api)
     {
 
-        $response = null;
+        $response = 1;
         $array = array_merge($array);
         $array = array_unique(array_column($array, 'schooldata'));
         $array = array_filter($array, 'is_numeric');
@@ -268,7 +288,8 @@ class RsnDataExtension extends AbstractExtension
         $result = curl_exec($c);
 
         if (curl_errno($c)) {
-            $response = json_encode(curl_error($c));
+            // $response = json_encode(curl_error($c));
+            $response = 1;
         }
         else {
             $response = json_decode($result);
@@ -277,7 +298,56 @@ class RsnDataExtension extends AbstractExtension
         curl_close($c);
 
       //   print_r($response);
+    
         return $response;
+    }
+
+    function sortEvents($events, $start, $end)
+    {
+        $sortedEvents = [];
+
+        $start = strtotime($start);
+        $end = strtotime($end);
+
+        $i = 0;
+        foreach($events as $event){
+            $i++;
+            $eventDates = $event->type->handle === 'onlineEvent' ? $event->eventDatesTimeOnline->all() : $event->eventDatesTime->all();
+           // print_r($eventDates);
+            $eventDays = $this->sortEventDates($eventDates, $start, $end);
+            // use unix date as array key to allow k sorting
+            if ( count($eventDays) > 0 ){
+                $startDate = 0;
+                if($eventDays[array_key_last($eventDays)]->startDateTime != null){
+                    $startDate = $eventDays[array_key_last($eventDays)]->startDateTime->format('U') + $i;
+                }
+
+                $sortedEvents[$startDate] = $event;
+            }
+        }
+
+        krsort($sortedEvents);
+        return array_values($sortedEvents);
+    }
+
+    public function sortEventDates($dates, $start, $end) {
+
+        $eventDays = [];
+        foreach($dates as $date) {
+            $eventDate = null;
+            if($date->startDateTime != null){
+                $eventDate = strtotime($date->startDateTime->format('Y-m-d'));
+            }
+            if($start == null){
+                $eventDays[] = $date;
+            }
+            if (($eventDate >= $start) && ($eventDate < $end) ) {
+                $eventDays[] = $date;
+            }
+        }
+
+        return $eventDays;
+
     }
 
 }

@@ -20,8 +20,9 @@ use percipioglobal\rsndata\helpers\RsnDataExtension;
 use Craft;
 use craft\base\Element;
 use craft\base\Plugin;
-use craft\events\RegisterComponentTypesEvent;
 use craft\events\PluginEvent;
+use craft\events\RegisterComponentTypesEvent;
+use craft\events\RegisterUserPermissionsEvent;
 use craft\helpers\ElementHelper;
 use craft\helpers\UrlHelper;
 use craft\services\Fields;
@@ -48,7 +49,7 @@ use yii\base\Event;
  *
  * @property  RsnDataServiceService $rsnDataService
  * @property  Settings $settings
- * @method    Settings getSettings()
+ * @method    Settings getSettinstallEventListenersings()
  */
 class RsnData extends Plugin
 {
@@ -111,6 +112,8 @@ class RsnData extends Plugin
             $rsnDataExtension = new RsnDataExtension();
             Craft::$app->view->registerTwigExtension($rsnDataExtension);
         }
+        // Install our event listeners
+        $this->installEventListeners();
 
         // Register our fields
         Event::on(
@@ -198,6 +201,30 @@ class RsnData extends Plugin
                 'settings' => $this->getSettings()
             ]
         );
+    }
+
+    protected function installEventListeners()
+    {
+            $request = Craft::$app->getRequest();
+            // Install only for non-console Control Panel requests
+            if ($request->getIsCpRequest() && !$request->getIsConsoleRequest()) {
+                $this->installCpEventListeners();
+            }
+    }
+
+     /**
+     * Install site event listeners for Control Panel requests only
+     */
+    protected function installCpEventListeners()
+    {
+
+        // Handler: UserPermissions::EVENT_REGISTER_PERMISSIONS
+       Event::on(UserPermissions::class, UserPermissions::EVENT_REGISTER_PERMISSIONS, function(RegisterUserPermissionsEvent $event) {
+           $event->permissions[Craft::t('rsn-data', 'RSN Data')] = [
+               'rsndataAccessAll' => ['label' => Craft::t('rsn-data', 'Access all schools')],
+               'rsndataAccessBeta' => ['label' => Craft::t('rsn-data', 'Access beta functions')],
+           ];
+       });
     }
 
      // CP NAV

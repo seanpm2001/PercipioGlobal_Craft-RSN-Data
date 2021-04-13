@@ -15,9 +15,9 @@ var rsnInit = function() {
     if ($('.chart-js').length) {
         chartBuilder();
     }
-    // if ($('.map-js').length) {
-    //     initMap();
-    // }
+    if ($('.map-js').length) {
+        initMap();
+    }
 }
 
 var timeset = $('#time-btn').data('time');
@@ -104,8 +104,8 @@ var chartBuilder = function() {
             }
         },
         responsive: true,
-        maintainAspectRatio: false,
-        legend:{ display: false },
+           maintainAspectRatio: false,
+          legend:{ display: false },
           scales: {
               xAxes: [{
                   scaleLabel:{
@@ -147,8 +147,8 @@ var chartBuilder = function() {
         data: {
             labels: ['Engagement Level'],
             datasets: [
-              optionsEngaged($(ctx.canvas).data('engaged')),
-              optionsSustained($(ctx.canvas).data('sustained')),
+              optionsEngaged($(ctx.canvas).data('engaged')), 
+              optionsSustained($(ctx.canvas).data('sustained')), 
               optionsEmbedded($(ctx.canvas).data('embedded')),
             ]
         },
@@ -181,7 +181,7 @@ var chartBuilder = function() {
           }
       });
 
-    // Follow on Support
+    // Follow on Support 
     var ctx = document.getElementById('chart-followOnSupport').getContext('2d');
     var values = $(ctx.canvas).data('values').split('|');
     var labels = $(ctx.canvas).data('labels').split('|');
@@ -216,7 +216,7 @@ var chartBuilder = function() {
                 },
             }],
             xAxes: [{
-
+              
               scaleLabel:{
                   display:false
               },
@@ -239,7 +239,9 @@ function initMap() {
     // The location of RSN
     var mapContainer = $('#engagementMap'),
         json = JSON.parse(mapContainer.attr('data-markers'));
-        // console.log(json);
+        console.log(json);
+
+
         var map = new google.maps.Map(document.getElementById('engagementMap'), {
             zoom: 7,
             center: new google.maps.LatLng(53,-1.7),

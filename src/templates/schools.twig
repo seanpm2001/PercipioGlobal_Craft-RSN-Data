@@ -30,7 +30,6 @@
 {%- set eventSite = selectedSite -%}
 {%- set markers = null -%}
 {%- set uri = craft.app.request.fullPath() -%}
-{%- set googleApiKey = craft.app.plugins.getPlugin('rsn-data').getSettings().getGoogleApiKey() -%}
 
 {# any header buttons #}
 {%- block actionButton -%}
@@ -42,22 +41,23 @@
             currentSiteName:  currentSite.name
         } -%}
 
-        {%- include "rsn-data/_includes/schools-menu.twig" with {
-            baseUrl: '/cp/rsn-data/' ~ selectedNavItem,
-            selectedTime: selectedSchools
-        } -%}
-
-        {%- include "rsn-data/_includes/time-menu.twig" with {
-            baseUrl: '/cp/rsn-data/' ~ selectedNavItem,
-            selectedTime: selectedTime
-        } -%}
-
 {%- endblock -%}
 
 
 {%- set content -%}
-    <h2 class="text-lg font-bold leading-5 mb-1">{{ title }} </h2>
-    <p class="py-2">Map showing <b data-schools-set>all schools</b> engaged for period: <b data-time-set>Last 6 months</b></p>
+
+    {%- include "rsn-data/_includes/schools-menu.twig" with {
+        baseUrl: '/cp/rsn-data/' ~ selectedNavItem,
+        selectedTime: selectedSchools,
+        selectedSchools: selectedSchools
+    } -%}
+    
+    {%- include "rsn-data/_includes/time-menu.twig" with {
+        baseUrl: '/cp/rsn-data/' ~ selectedNavItem,
+        selectedTime: selectedTime,
+        selectedSchools: selectedSchools
+    } -%}
+    <p class="my-4">Change the map view to display your chosen data set by using the options above.</p>
 
     {%- set currentYear = 'now'|date('Y') -%}
     {%- set previousYear = 'now'|date('Y')-1 -%}
@@ -66,7 +66,6 @@
     {%- switch selectedTime -%}
         {%- case '1' -%}
             {%- set start = date('january 01 2019')|atom -%}
-            {%- set selectedTime = 'now'|date('n') -%}
         {%- case '6' -%}
             {%- set start = date('-6 months')|atom -%}
         {%- case '12' -%}
@@ -86,15 +85,16 @@
 
     {%- set events = craft.entries.section('events')
         .site(eventSite)
-        .postDate(['and', ">= #{start}", "< #{end}"])
         .anyStatus()
         .all()
     -%}
 
+    {%- set events = sortEvents(events, start, end) -%}
+
     {%- set allData = [] -%}
 
     {%- for event in events -%}
-
+    
         {%- set dataEngagement = null -%}
 
         {%- if event.dataEngagement is iterable and (event.dataEngagement.data is not null and event.dataEngagement.data is iterable) -%}
@@ -104,17 +104,13 @@
 
         {%- if loop.last and allData is not empty -%}
 
-            {%- do view.registerJsFile("https://maps.googleapis.com/maps/api/js?v=3.42&key=" ~ googleApiKey ~ '&callback=initMap', {"async":"async"}) -%}
-            {%- set markers = fetchUrns(allData) -%}
+        {%- set markers = fetchGeo(allData, selectedSchools, metaseedUrl) -%}
 
-            <div id="engagementMap"
-                class="map-js mt-2"
-                data-key="{{ googleApiKey }}"
-                data-lat="53.780582"
-                data-lng="-1.757185"
-                data-school="{{ selectedSite }}"
-                data-markers="{{ markers }}"
-            ></div>
+        <div id="engagementMap"
+            class="map-js mt-6"
+            data-iconbase=""
+            data-markers="{{ markers }}"
+        ></div>
 
         {%- endif -%}
 

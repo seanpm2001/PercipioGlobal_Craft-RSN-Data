@@ -26,6 +26,7 @@
 {%- set metaseedUrl = craft.app.plugins.getPlugin('rsn-data').settings.metaseedUrl -%}
 {%- set selectedSite = craft.app.request.getQueryParam('site')|default('main') -%}
 {%- set selectedTime = craft.app.request.getQueryParam('time')|default('6') -%}
+{%- set selectedSchools = craft.app.request.getQueryParam('p')|default('0') -%}
 {%- set monthCount = selectedTime -%}
 {%- set eventSite = selectedSite -%}
 {%- set uri = craft.app.request.fullPath() -%}
@@ -40,11 +41,6 @@
             currentSiteName:  currentSite.name
         } -%}
 
-        {%- include "rsn-data/_includes/time-menu.twig" with {
-            baseUrl: '/cp/rsn-data/',
-            selectedTime: selectedTime
-        } -%}
-
 {%- endblock -%}
 
 {%- set content -%}
@@ -56,7 +52,6 @@
     {%- switch selectedTime -%}
         {%- case '1' -%}
             {%- set start = date('january 01 2019')|atom -%}
-            {%- set selectedTime = 'now'|date('n') -%}
             {%- set monthCount = '24' -%}
         {%- case '6' -%}
             {%- set start = date('-6 months')|atom -%}
@@ -77,16 +72,23 @@
         {%- set eventSite = '*' -%}
     {%- endif -%}
 
-    <span class="text-normal text-center block tracking-tight w-100 block mt-0 mb-3">
-        Showing data from <b>{{ start|date('F, d Y ') }}</b> to <b>{{ end|date('F, d Y ') }}</b>
-    </span>
+    {%- include "rsn-data/_includes/time-menu.twig" with {
+        baseUrl: '/cp/rsn-data/',
+        selectedTime: selectedTime,
+        selectedSchools: selectedSchools
+    } -%}
+    <p class="my-4 tracking-tight"> Showing data from <b>{{ start|date('F, d Y ') }}</b> to <b>{{ end|date('F, d Y ') }}</b></p>
+
+
+
     <div class="relative flex flex-row justify-between flex-wrap">
     {%- set events = craft.entries.section('events')
         .site(eventSite)
-        .postDate(['and', ">= #{start}", "< #{end}"])
         .anyStatus()
         .all()
     -%}
+
+    {%- set events = sortEvents(events, start, end) -%}
 
     {%- set allData = [] -%}
     {%- set allSupport = [] -%}
@@ -109,7 +111,8 @@
             {%- set supportEngagement = event.dataEngagement.support -%}
             {%- set allSupport = supportEngagement|merge(allSupport) -%}
         {%- endif -%}
-
+        
+        {% cache unless currentUser %}
         {%- if loop.last and allData is not empty -%}
 
             {%- set totalSchools = totalSchools(allData) -%}
@@ -208,6 +211,7 @@
                 </div>
             </div>
         {%- endif -%}
+        {% endcache %}
 
         {%- if loop.last and allData|length == '0' -%}
             <div class="widget inline-flex p-1 w-full">
