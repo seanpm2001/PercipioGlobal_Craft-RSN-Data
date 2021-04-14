@@ -104,6 +104,7 @@
         
             'info': {
                 'rsn': network.networkShortName,
+                'event': event.title,
                 'eventid': event.id,
                 'eventdate': eventDate
             }
@@ -115,7 +116,6 @@
         {%- endif -%}
 
         {%- set exportData = arrayInsert(info, allData)|merge(exportData) -%}
-
 
         {%- if loop.last and exportData is not empty -%}
         {% cache unless currentUser %}
@@ -142,6 +142,7 @@
             <div class="select mr-4">
                 <select name="type">
                     <option value="attendee">Attendee data</option>
+                    <option value="eventref">Event ID reference table</option>
                     <option value="mailing">Mailing list subscribers</option>
                     <option value="school">School data</option>
                 </select>
