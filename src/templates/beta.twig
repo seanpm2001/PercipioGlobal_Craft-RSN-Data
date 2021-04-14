@@ -1,0 +1,49 @@
+{#
+/**
+ * RSN Data plugin for Craft CMS 3.x
+ *
+ * RSN Data index.twig
+ *
+ * @author    Percipio
+ * @copyright Copyright (c) 2020 Percipio
+ * @link      https://percipio.london
+ * @package   RsnData
+ * @since     1.0.0
+ */
+#}
+
+{% requirePermission 'rsndataAccessBeta' %}
+
+{%- extends "rsn-data/layouts/_cp" -%}
+
+{%- import "_includes/forms" as forms -%}
+
+{%- do view.registerAssetBundle("percipioglobal\\rsndata\\assetbundles\\rsndata\\RsnDataAsset") -%}
+{%- do view.registerAssetBundle("percipioglobal\\rsndata\\assetbundles\\indexcpsection\\IndexCPSectionAsset") -%}
+
+{# The title of this CP section #}
+{%- set title = "Beta"|t('rsn-data') -%}
+{%- set selectedNavItem = 'beta' -%}
+{%- set metaseedUrl = craft.app.plugins.getPlugin('rsn-data').settings.metaseedUrl -%}
+{%- set selectedSite = craft.app.request.getQueryParam('site')|default('main') -%}
+{%- set selectedTime = craft.app.request.getQueryParam('time')|default('6') -%}
+{%- set selectedSchools = craft.app.request.getQueryParam('p')|default('0') -%}
+{%- set eventSite = selectedSite -%}
+{%- set uri = craft.app.request.fullPath() -%}
+
+{# any header buttons #}
+{%- block actionButton -%}
+
+        {%- include "rsn-data/_includes/sites-menu.twig" with {
+            baseUrl: '/cp/rsn-data/' ~ selectedNavItem,
+            currentSiteId: currentSite.id,
+            currentSiteHandle: currentSite.handle,
+            currentSiteName:  currentSite.name
+        } -%}
+
+{%- endblock -%}
+
+
+{%- set content -%}
+
+{%- endset -%}

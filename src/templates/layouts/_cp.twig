@@ -1,9 +1,6 @@
 {% extends "_layouts/cp" %}
 {% import "_includes/forms" as forms %}
 
-{# Link for the ? icon at the bottom of the page #}
-{% set docsUrl = "???" %}
-
 {# The URL to this plugin's base CP section #}
 {% set pluginCpUrl = url('rsn-data/') %}
 
@@ -19,6 +16,13 @@
     schools: { label: "Schools"|t('rsnData'), url: url('rsn-data/schools/?site='~selectedSite) },
     export: { label: "Export"|t('rsnData'), url: url('rsn-data/export/?site='~selectedSite) },
 } %}
+
+{% if currentUser.can('rsndataAccessBeta') %}
+    {%  set betaNav = {
+        beta: { label: "Beta"|t('rsnData'), url: url('rsn-data/beta/?site='~selectedSite) },
+    } %}
+    {% set navItems = navItems|merge(betaNav) %}
+{% endif %}
 
 {% block sidebar %}
     {% include "_includes/nav" with { items: navItems, selectedItem: selectedNavItem } only %}
