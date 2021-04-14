@@ -139,12 +139,16 @@
                 selectedTime: selectedTime,
                 selectedSchools: selectedSchools
             } -%}
+
+            {%- set exportStatus = selectedSchools == 1 ? 'disabled' : null -%}
+
             <div class="select mr-4">
                 <select name="type">
-                    <option value="attendee">Attendee data</option>
-                    <option value="eventref">Event ID reference table</option>
-                    <option value="mailing">Mailing list subscribers</option>
-                    <option value="school">School data</option>
+                    <option value="attendee" {{ exportStatus }}>Attendee data</option>
+                    <option value="eventref" {{ exportStatus }}>Event ID reference table</option>
+                    <option value="mailing" {{ exportStatus }}>Mailing list subscribers</option>
+                    <option value="school">School data (per attendee)</option>
+                    <option value="schoolGrouped">School data (per school)</option>
                 </select>
             </div>
             <button class="mt-2 btn submit" type="submit" data-icon="download"> Export</button>
