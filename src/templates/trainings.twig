@@ -35,6 +35,7 @@
 {% endblock %}
 
 {% set content %}
+
     
 <div class="tableview tablepane">
    <table class="data fullwidth">
@@ -49,24 +50,25 @@
     </thead>
     <tbody>
 
+        {% cache unless currentUser %}
         {%- set events = craft.entries.section('events')
             .site(selectedSite)
-            .orderBy('postDate desc')
             .anyStatus()
             .all()
         -%}
+        {%- set events = sortEvents(events, null, null) -%}
 
         {% for event in events %}
         {% set eventEnabled = 'disabled'%}{% if event.enabled %}{% set eventEnabled = 'enabled'%}{% endif %}
         {% if event.type == 'onlineEvent' %}
-            {% set eventTimetable = event.eventDatesTimeOnline.one() %}
+            {% set eventTimetable = event.eventDatesTimeOnline.inReverse().one() %}
         {% else %}
-            {% set eventTimetable = event.eventDatesTime.one() %}
+            {% set eventTimetable = event.eventDatesTime.inReverse().one() %}
         {% endif %}
         
         {% set eventDate = eventTimetable.startDateTime ?? '' %}
         {% if eventDate %}
-            {% set eventDate = eventTimetable.startDateTime|date('d/n/Y - ') ~ eventTimetable.startTime|date('H:i') %}
+            {% set eventDate = eventTimetable.startDateTime|date('d/n/Y') %}
         {% endif %}
 
         {% set dataEngagement = null %}
@@ -140,6 +142,7 @@
             </td>
         </tr>
         {% endfor %}
+        {% endcache %}
 
     </tbody>
 </table>

@@ -12,6 +12,8 @@
  * @since     1.0.0
  */
 #}
+
+{% requirePermission 'rsndataAccessBeta' %}
 {%- extends "rsn-data/layouts/_cp" -%}
 
 {%- import "_includes/forms" as forms -%}
@@ -21,21 +23,21 @@
 
 
 {# The title of this CP section #}
-{%- set title = "Schools"|t('rsn-data') -%}
-{%- set selectedNavItem = 'schools' -%}
+{%- set title = "Beta"|t('rsn-data') -%}
+{%- set selectedNavItem = 'beta' -%}
 {%- set metaseedUrl = craft.app.plugins.getPlugin('rsn-data').settings.metaseedUrl -%}
 {%- set selectedSite = craft.app.request.getQueryParam('site')|default('main') -%}
 {%- set selectedTime = craft.app.request.getQueryParam('time')|default('6') -%}
 {%- set selectedSchools = craft.app.request.getQueryParam('p')|default('0') -%}
+{%- set monthCount = selectedTime -%}
 {%- set eventSite = selectedSite -%}
-{%- set markers = null -%}
 {%- set uri = craft.app.request.fullPath() -%}
 
 {# any header buttons #}
 {%- block actionButton -%}
 
         {%- include "rsn-data/_includes/sites-menu.twig" with {
-            baseUrl: '/cp/rsn-data/' ~ selectedNavItem,
+            baseUrl: '/cp/rsn-data/',
             currentSiteId: currentSite.id,
             currentSiteHandle: currentSite.handle,
             currentSiteName:  currentSite.name
@@ -43,21 +45,7 @@
 
 {%- endblock -%}
 
-
 {%- set content -%}
-
-    {%- include "rsn-data/_includes/schools-menu.twig" with {
-        baseUrl: '/cp/rsn-data/' ~ selectedNavItem,
-        selectedTime: selectedSchools,
-        selectedSchools: selectedSchools
-    } -%}
-    
-    {%- include "rsn-data/_includes/time-menu.twig" with {
-        baseUrl: '/cp/rsn-data/' ~ selectedNavItem,
-        selectedTime: selectedTime,
-        selectedSchools: selectedSchools
-    } -%}
-    <p class="my-4">Change the map view to display your chosen data set by using the options above.</p>
 
     {%- set currentYear = 'now'|date('Y') -%}
     {%- set previousYear = 'now'|date('Y')-1 -%}
@@ -66,15 +54,18 @@
     {%- switch selectedTime -%}
         {%- case '1' -%}
             {%- set start = date('january 01 2019')|atom -%}
+            {%- set monthCount = '24' -%}
         {%- case '6' -%}
             {%- set start = date('-6 months')|atom -%}
         {%- case '12' -%}
             {%- set start = date('-12 months')|atom -%}
         {%- case currentYear -%}
             {%- set start = date('this year january 01')|atom -%}
+            {%- set monthCount = 'now'|date('n') -%}
         {%- case previousYear -%}
             {%- set start = date('last year january 01')|atom -%}
             {%- set end = date('last year december 31')|atom -%}
+            {%- set monthCount = '12' -%}
         {%- default -%}
             {%- set start = date('-6 months')|atom -%}
     {%- endswitch -%}
@@ -83,6 +74,15 @@
         {%- set eventSite = '*' -%}
     {%- endif -%}
 
+    {%- include "rsn-data/_includes/time-menu.twig" with {
+        baseUrl: '/cp/rsn-data/',
+        selectedTime: selectedTime,
+        selectedSchools: selectedSchools
+    } -%}
+    <p class="my-4 tracking-tight"> Showing data from <b>{{ start|date('F, d Y ') }}</b> to <b>{{ end|date('F, d Y ') }}</b></p>
+
+
+    <div class="relative flex flex-row justify-between flex-wrap">
     {%- set events = craft.entries.section('events')
         .site(eventSite)
         .anyStatus()
@@ -92,34 +92,57 @@
     {%- set events = sortEvents(events, start, end) -%}
 
     {%- set allData = [] -%}
+    {%- set allSupport = [] -%}
+    {%- set count = 0 -%}
 
     {%- for event in events -%}
-    
+
         {%- set dataEngagement = null -%}
+        {%- set dataEnganged = 0 -%}
+        {%- set dataSustained = 0 -%}
+        {%- set dataEmbedded = 0 -%}
 
         {%- if event.dataEngagement is iterable and (event.dataEngagement.data is not null and event.dataEngagement.data is iterable) -%}
             {%- set dataEngagement = event.dataEngagement.data -%}
             {%- set allData = dataEngagement|merge(allData) -%}
+            {%- set count = count + 1 -%}
         {%- endif -%}
 
+        {% cache unless currentUser %}
         {%- if loop.last and allData is not empty -%}
 
-        {%- set markers = fetchGeo(allData, selectedSchools, metaseedUrl) -%}
+            {%- set totalEngaged = engagementLevel(allData, 1) -%}
+            {%- set totalSustained = engagementLevel(allData, 2) -%}
+            {%- set totalEmbedded = engagementLevel(allData, 3) -%}
 
-        <div id="engagementMap"
-            class="map-js mt-6"
-            data-iconbase=""
-            data-markers="{{ markers }}"
-        ></div>
-
+            <div class="widget inline-flex p-1 w-full">
+                <div class="front w-full">
+                    <div class="pane">
+                        <div class="widget-heading">
+                            <h2 class="text-lg font-bold">Engagement Level (by school)</h2>
+                            <h6 class="text-xs uppercase" data-time-set>Last 12 months</h6>
+                            <div class="body h-52 pb-6">
+                                <canvas id="chart-engagementLevel"
+                                        class="chart-js"
+                                        data-engaged="{{ totalEngaged }}"
+                                        data-sustained="{{ totalSustained }}"
+                                        data-embedded="{{ totalEmbedded }}">
+                                </canvas>
+                                <p class="text-center text-sm">Showing the split of engagement levels across all events in this time period.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         {%- endif -%}
+        {% endcache %}
 
         {%- if loop.last and allData|length == '0' -%}
             <div class="widget inline-flex p-1 w-full">
                 <div class="front w-full">
                     <div class="pane relative">
                         <div class="widget-heading">
-                            <h2 class="text-lg font-bold">No school data found</h2>
+                            <h2 class="text-lg font-bold">Engagement data not found</h2>
                             <h6 class="text-xs uppercase" data-time-set>Last 12 months</h6>
                             <div class="body mt-4">
                                 <p>No engagement data has been found for this Research School.</p>
@@ -130,22 +153,6 @@
             </div>
         {%- endif -%}
 
+
 {%- endfor -%}
-
-{%- if events|length == 0 -%}
-    <div class="widget inline-flex p-1 w-full">
-        <div class="front w-full">
-            <div class="pane">
-                <div class="widget-heading">
-                    <h2 class="text-lg font-bold">No school data found</h2>
-                    <h6 class="text-xs uppercase" data-time-set>Last 12 months</h6>
-                    <div class="body mt-4">
-                        <p>No engagement data has been found for this Research School.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-{%- endif -%}
-
 {%- endset -%}

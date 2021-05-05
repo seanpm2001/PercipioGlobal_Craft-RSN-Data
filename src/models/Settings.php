@@ -14,7 +14,6 @@ use percipioglobal\rsndata\RsnData;
 
 use Craft;
 use craft\base\Model;
-use craft\behaviors\EnvAttributeParserBehavior;
 
 /**
  * RsnData Settings Model
@@ -46,21 +45,6 @@ class Settings extends Model
     // Public Methods
     // =========================================================================
 
-    public function behaviors()
-    {
-        return [
-            'parser' => [
-                'class' => EnvAttributeParserBehavior::class,
-                'attributes' => ['googleApiKey'],
-            ],
-        ];
-    }
-
-    public function getGoogleApiKey(): string
-    {
-        return Craft::parseEnv($this->googleApiKey);
-    }
-
     /**
      * Returns the validation rules for attributes.
      *
@@ -72,7 +56,7 @@ class Settings extends Model
      * @return array
      */
     public function rules()
-    {
+    {   
         return [
             ['googleApiKey', 'string'],
             ['googleApiKey', 'default', 'value' => ''],

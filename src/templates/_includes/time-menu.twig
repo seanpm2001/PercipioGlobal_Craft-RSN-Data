@@ -28,16 +28,16 @@
 {% for time in times %}
     {%  if time.value == selectedTime %}
         {%  set activeTime = 1 %}
-        <div id="time-btn" class="btn menubtn ml-4" data-icon="time" data-time="{{ time.label }}">{{ time.label }}</div>
+        <div id="time-btn" class="btn menubtn mr-4" data-icon="time" data-time="{{ time.label }}">{{ time.label }}</div>
     {%  endif %}
 {% endfor %}
 {%  if activeTime == 0 %}
-    <div id="time-btn" class="btn menubtn  ml-4" data-icon="time">Last 6 months</div>
+    <div id="time-btn" class="btn menubtn  mr-4" data-icon="time">Last 6 months</div>
 {%  endif %}
 <div class="menu">
     <ul class="padded">
         {% for time in times %}
-        {% set url = baseUrl ~ '?site=' ~ selectedSite ~ '&time=' ~ time.value %}
+        {% set url = baseUrl ~ '?site=' ~ selectedSite ~ '&time=' ~ time.value ~ '&p=' ~ selectedSchools %}
         <li>
             <a href="{{ url }}" title="{{ time.value }}">
                 <div class="status {% if time.value == selectedTime %} enabled{%  endif %}"></div>{{ time.label }}

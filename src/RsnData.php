@@ -20,8 +20,9 @@ use percipioglobal\rsndata\helpers\RsnDataExtension;
 use Craft;
 use craft\base\Element;
 use craft\base\Plugin;
-use craft\events\RegisterComponentTypesEvent;
 use craft\events\PluginEvent;
+use craft\events\RegisterComponentTypesEvent;
+use craft\events\RegisterUserPermissionsEvent;
 use craft\helpers\ElementHelper;
 use craft\helpers\UrlHelper;
 use craft\services\Fields;
@@ -48,7 +49,7 @@ use yii\base\Event;
  *
  * @property  RsnDataServiceService $rsnDataService
  * @property  Settings $settings
- * @method    Settings getSettings()
+ * @method    Settings getSettinstallEventListenersings()
  */
 class RsnData extends Plugin
 {
@@ -74,18 +75,21 @@ class RsnData extends Plugin
     public $schemaVersion = '1.0.0';
 
     /**
-     * Set to `true` if the plugin should have a settings view in the control panel.
      *
      * @var bool
      */
     public $hasCpSettings = true;
 
     /**
-     * Set to `true` if the plugin should have its own section (main nav item) in the control panel.
      *
      * @var bool
      */
     public $hasCpSection = true;
+
+    /**
+     * @var array
+     */
+    public static $userOperations;
 
     // Public Methods
     // =========================================================================
@@ -105,12 +109,14 @@ class RsnData extends Plugin
     {
         parent::init();
         self::$plugin = $this;
+        self::$userOperations = $this->_getUserOperations();
 
         if (Craft::$app->request->getIsCpRequest()) {
             // Add in our Twig extension
             $rsnDataExtension = new RsnDataExtension();
             Craft::$app->view->registerTwigExtension($rsnDataExtension);
         }
+
 
         // Register our fields
         Event::on(
@@ -120,17 +126,6 @@ class RsnData extends Plugin
                 $event->types[] = RsnDataFieldField::class;
             }
         );
-
-        /* Register our widgets
-        Event::on(
-            Dashboard::class,
-            Dashboard::EVENT_REGISTER_WIDGET_TYPES,
-            function (RegisterComponentTypesEvent $event) {
-                $event->types[] = DataEngagementWidget::class;
-            }
-        );
-
-        */
 
         // Do something after we're installed
         Event::on(
@@ -143,24 +138,18 @@ class RsnData extends Plugin
             }
         );
 
-/**
- * Logging in Craft involves using one of the following methods:
- *
- * Craft::trace(): record a message to trace how a piece of code runs. This is mainly for development use.
- * Craft::info(): record a message that conveys some useful information.
- * Craft::warning(): record a warning message that indicates something unexpected has happened.
- * Craft::error(): record a fatal error that should be investigated as soon as possible.
- *
- * Unless `devMode` is on, only Craft::warning() & Craft::error() will log to `craft/storage/logs/web.log`
- *
- * It's recommended that you pass in the magic constant `__METHOD__` as the second parameter, which sets
- * the category to the method (prefixed with the fully qualified class name) where the constant appears.
- *
- * To enable the Yii debug toolbar, go to your user account in the AdminCP and check the
- * [] Show the debug toolbar on the front end & [] Show the debug toolbar on the Control Panel
- *
- * http://www.yiiframework.com/doc-2.0/guide-runtime-logging.html
- */
+        // Register our plugin permissions
+       Event::on(
+           UserPermissions::class,
+           UserPermissions::EVENT_REGISTER_PERMISSIONS,
+           function(RegisterUserPermissionsEvent $event) {
+           $event->permissions[Craft::t('rsn-data', 'RSN Data')] = [
+                   'rsndataAccessAll' => ['label' => Craft::t('rsn-data', 'Access all schools')],
+                   'rsndataAccessBeta' => ['label' => Craft::t('rsn-data', 'Access beta functions')],
+                ];
+            }
+        );
+
         Craft::info(
             Craft::t(
                 'rsn-data',
@@ -200,10 +189,9 @@ class RsnData extends Plugin
         );
     }
 
-     // CP NAV
+
+    // CP NAV
     // =========================================================================
-
-
     protected function _registerCpRoutes()
     {
         Event::on(UrlManager::class, UrlManager::EVENT_REGISTER_CP_URL_RULES, function(RegisterUrlRulesEvent $event) {
@@ -212,6 +200,25 @@ class RsnData extends Plugin
             $event->rules['rsn-data/schools/'] = ['template' => 'rsn-data/cp/schools/view'];
             $event->rules['rsn-data/trainings/'] = ['template' => 'rsn-data/cp/trainings'];
             $event->rules['rsn-data/export/'] = ['template' => 'rsn-data/cp/export/'];
+            $event->rules['rsn-data/beta/'] = ['template' => 'rsn-data/beta', 'variables' => ['template' => 'rsn-data/cp/export/', 'rsndataAccessBeta' => self::$userOperations]];
         });
+    }
+
+    // Permission handler
+    // =========================================================================
+    private function _getUserOperations():array
+    {
+        $operations = [];
+
+        if (Craft::$app->getUser()->getIdentity()) {
+            $user = Craft::$app->getUser()->getIdentity();
+            $operations['rsndataAccessAll'] = $user->admin || $user->can('rsndataAccessAll');
+            $operations['rsndataAccessBeta'] = $user->admin || $user->can('rsndataAccessBeta');
+        } else {
+            $operations['rsndataAccessAll'] = false;
+            $operations['rsndataAccessBeta'] = false;
+        }
+
+        return $operations;
     }
 }

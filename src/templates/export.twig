@@ -39,24 +39,10 @@
             currentSiteName:  currentSite.name
         } -%}
 
-        {%- include "rsn-data/_includes/schools-menu.twig" with {
-            baseUrl: '/cp/rsn-data/' ~ selectedNavItem,
-            selectedTime: selectedSchools
-        } -%}
-        
-        {%- include "rsn-data/_includes/time-menu.twig" with {
-            baseUrl: '/cp/rsn-data/' ~ selectedNavItem,
-            selectedTime: selectedTime
-        } -%}
-
 {%- endblock -%}
 
 
 {%- set content -%}
-    <h2 class="text-lg font-bold leading-5 mb-1">{{ title }} </h2>
-    <p class="py-2">Exporting <b data-schools-set>all school data</b> for period: <b data-time-set>Last 6 months</b></p>
-    
-
     {%- set currentYear = 'now'|date('Y') -%}
     {%- set previousYear = 'now'|date('Y')-1 -%}
     {%- set end = date('now')|atom -%}
@@ -64,7 +50,6 @@
     {%- switch selectedTime -%}
         {%- case '1' -%}
             {%- set start = date('january 01 2019')|atom -%}
-            {%- set selectedTime = 'now'|date('n') -%}
         {%- case '6' -%}
             {%- set start = date('-6 months')|atom -%}
         {%- case '12' -%}
@@ -81,26 +66,59 @@
     {%- if eventSite == 'main' -%}
         {%- set eventSite = '*' -%}
     {%- endif -%}
+    
+
 
     {%- set events = craft.entries.section('events')
         .site(eventSite)
-        .postDate(['and', ">= #{start}", "< #{end}"])
         .anyStatus()
         .all()
     -%}
 
-    {%- set allData = [] -%}
+    {%- set events = sortEvents(events, start, end) -%}
+
+    {%- set exportData = [] -%}
 
     {%- for event in events -%}
     
+        {%- set network = craft.globalSets()
+            .handle('networkSettings')
+            .siteId(event.siteId)
+            .one()
+        -%}
+        {%- set allData = [] -%}
         {%- set dataEngagement = null -%}
+
+        {% if event.type == 'onlineEvent' %}
+            {% set eventTimetable = event.eventDatesTimeOnline.inReverse().one() %}
+        {% else %}
+            {% set eventTimetable = event.eventDatesTime.inReverse().one() %}
+        {% endif %}
+        
+        {% set eventDate = eventTimetable.startDateTime ?? '' %}
+        {% if eventDate %}
+            {% set eventDate = eventTimetable.startDateTime|date('d/n/Y') %}
+        {% endif %}
+
+        {%- set info = {
+        
+            'info': {
+                'rsn': network.networkShortName,
+                'event': event.title,
+                'eventid': event.id,
+                'eventdate': eventDate
+            }
+        } -%}
 
         {%- if event.dataEngagement is iterable and (event.dataEngagement.data is not null and event.dataEngagement.data is iterable) -%}
             {%- set dataEngagement = event.dataEngagement.data -%}
             {%- set allData = dataEngagement|merge(allData) -%}
         {%- endif -%}
 
-        {%- if loop.last and allData is not empty -%}
+        {%- set exportData = arrayInsert(info, allData)|merge(exportData) -%}
+
+        {%- if loop.last and exportData is not empty -%}
+        {% cache unless currentUser %}
 
         <form method="post" action="{{ metaseedUrl }}/export/">
             {{ csrfInput() }}
@@ -108,13 +126,39 @@
             <input type="hidden" name="priority" value="{{ selectedSchools }}"/>
             <input type="hidden" name="start" value="{{ start }}"/>
             <input type="hidden" name="end" value="{{ end }}"/>
-            <input type="hidden" name="data" value="{{ allData|json_encode }}"/>
-            <input class="mt-2 btn submit" type="submit" value="Export CSV"/>
+            <input type="hidden" name="data" value="{{ exportData|json_encode }}"/>
+
+            {%- include "rsn-data/_includes/schools-menu.twig" with {
+                baseUrl: '/cp/rsn-data/' ~ selectedNavItem,
+                selectedSchools: selectedSchools,
+                selectedTime: selectedTime
+            } -%}
+        
+            {%- include "rsn-data/_includes/time-menu.twig" with {
+                baseUrl: '/cp/rsn-data/' ~ selectedNavItem,
+                selectedTime: selectedTime,
+                selectedSchools: selectedSchools
+            } -%}
+
+            {%- set exportStatus = selectedSchools == 1 ? 'disabled' : null -%}
+
+            <div class="select mr-4">
+                <select name="type">
+                    <option value="attendee" {{ exportStatus }}>Attendee data</option>
+                    <option value="eventref" {{ exportStatus }}>Event ID reference table</option>
+                    <option value="mailing" {{ exportStatus }}>Mailing list subscribers</option>
+                    <option value="school">School data (per attendee)</option>
+                    <option value="schoolGrouped">School data (per school)</option>
+                </select>
+            </div>
+            <button class="mt-2 btn submit" type="submit" data-icon="download"> Export</button>
         </form>
-            
+        {% endcache %}
+        <p class="my-4">Use the options above to export your chosen data set.</p>
+
         {%- endif -%}
 
-        {%- if loop.last and allData|length == '0' -%}
+        {%- if loop.last and exportData|length == '0' -%}
             <div class="widget inline-flex p-1 w-full">
                 <div class="front w-full">
                     <div class="pane relative">
@@ -147,5 +191,6 @@
         </div>
     </div>
 {%- endif -%}
+
 
 {%- endset -%}

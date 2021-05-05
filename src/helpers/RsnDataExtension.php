@@ -22,6 +22,10 @@ class RsnDataExtension extends AbstractExtension
     public function getFunctions()
     {
         return array(
+            new \Twig\TwigFunction('arrayInsert', array(
+                $this,
+                'arrayInsert'
+            )) ,
             new \Twig\TwigFunction('totalSchools', array(
                 $this,
                 'totalSchools'
@@ -54,6 +58,10 @@ class RsnDataExtension extends AbstractExtension
                 $this,
                 'totalEmbedded'
             )) ,
+            new \Twig\TwigFunction('engagementLevel', array(
+                $this,
+                'engagementLevel'
+            )) ,
             new \Twig\TwigFunction('followOnSupport', array(
                 $this,
                 'followOnSupport'
@@ -70,7 +78,24 @@ class RsnDataExtension extends AbstractExtension
                 $this,
                 'fetchPriority'
             )) ,
+            new \Twig\TwigFunction('sortEvents', array(
+                $this,
+                'sortEvents'
+            )) ,
         );
+
+    }
+
+    function arrayInsert($info, $arrayLoop)
+    {
+        $array = array();
+
+        foreach ($arrayLoop as $arrayItem)
+        {
+            $array[] = array_merge($info['info'], $arrayItem);
+        }
+
+        return ($array);
 
     }
 
@@ -145,6 +170,50 @@ class RsnDataExtension extends AbstractExtension
         return $count;
     }
 
+    public function engagementLevel($array, $level)
+    {
+        $array = array_merge($array);
+        $arraySum = array();
+
+        foreach ($array as $vals)
+        {
+            if (array_key_exists($vals['school'], $array))
+            {
+                $arraySum[$vals['school']]['attendance'] += $vals['attendance'];
+            }
+            else
+            {
+                $arraySum[$vals['school']] = $vals;
+            }
+        }
+
+        $array = array_column($arraySum, 'attendance');
+
+        if ($level == 1)
+        {
+            array_walk_recursive($array, function ($i) use (&$count)
+            {
+                $count += (int)($i === '1');
+            });
+        }
+        if ($level == 2)
+        {
+            array_walk_recursive($array, function ($i) use (&$count)
+            {
+                $count += (int)($i === '2');
+            });
+        }
+        if ($level == 3)
+        {
+            array_walk_recursive($array, function ($i) use (&$count)
+            {
+                $count += (int)($i >= '3');
+            });
+        }
+
+        return $count;
+    }
+
     public function followOnSupport($array)
     {
         $options = array(
@@ -175,14 +244,11 @@ class RsnDataExtension extends AbstractExtension
         $array = array_merge($array);
         $array = array_count_values($array);
 
-        $remappedArray = array_combine(preg_replace(array_map(function ($s){
+        $remappedArray = array_combine(preg_replace(array_map(function ($s)
+        {
             return "/^$s$/";
-        }, 
-            array_keys($options)), 
-            $options, 
-            array_keys($array)), 
-            $array
-        );
+        }
+        , array_keys($options)) , $options, array_keys($array)) , $array);
 
         return $remappedArray;
     }
@@ -193,7 +259,7 @@ class RsnDataExtension extends AbstractExtension
         $array = array_unique(array_column($array, 'schooldata'));
         $array = array_filter($array, 'is_numeric');
         // print_r($array);
-        $array = implode('|',$array);
+        $array = implode('|', $array);
 
         return $array;
     }
@@ -205,79 +271,145 @@ class RsnDataExtension extends AbstractExtension
         $array = array_merge($array);
         $array = array_unique(array_column($array, 'schooldata'));
         $array = array_filter($array, 'is_numeric');
-       
-        $url = $api.'/geoFromUrns';
+
+        $url = $api . '/geoFromUrns';
         $array = json_encode($array);
 
         $c = curl_init();
 
-        curl_setopt($c, CURLOPT_USERAGENT,  'Mozilla/5.0 (Macintosh; Intel Mac OS X 11_1_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.150 Safari/537.36');
+        curl_setopt($c, CURLOPT_USERAGENT, 'Mozilla/5.0 (Macintosh; Intel Mac OS X 11_1_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.150 Safari/537.36');
         curl_setopt($c, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($c, CURLOPT_FOLLOWLOCATION, 1);
-        curl_setopt($c, CURLOPT_AUTOREFERER,    1);
+        curl_setopt($c, CURLOPT_AUTOREFERER, 1);
         curl_setopt($c, CURLOPT_SSL_VERIFYPEER, 0);
 
-        curl_setopt($c, CURLOPT_URL, $url );
+        curl_setopt($c, CURLOPT_URL, $url);
         curl_setopt($c, CURLOPT_REFERER, $url);
         curl_setopt($c, CURLOPT_POST, true);
-        curl_setopt($c, CURLOPT_POSTFIELDS, [
-            "priority" => $priority,
-            "data" => $array
-        ]);
+        curl_setopt($c, CURLOPT_POSTFIELDS, ["priority" => $priority, "data" => $array]);
 
         $result = curl_exec($c);
 
-        if (curl_errno($c)) {
+        if (curl_errno($c))
+        {
             $response = json_encode(curl_error($c));
         }
-        else {
+        else
+        {
             $response = $result;
         }
         curl_close($c);
 
-      //   print_r($response);
+        //   print_r($response);
         return $response;
     }
 
     public function fetchPriority($array, $api)
     {
 
-        $response = null;
+        $response = 1;
         $array = array_merge($array);
         $array = array_unique(array_column($array, 'schooldata'));
         $array = array_filter($array, 'is_numeric');
-       
-        $url = $api.'/priorityFromUrns';
+
+        $url = $api . '/priorityFromUrns';
         $array = json_encode($array);
 
         $c = curl_init();
 
-        curl_setopt($c, CURLOPT_USERAGENT,  'Mozilla/5.0 (Macintosh; Intel Mac OS X 11_1_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.150 Safari/537.36');
+        curl_setopt($c, CURLOPT_USERAGENT, 'Mozilla/5.0 (Macintosh; Intel Mac OS X 11_1_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.150 Safari/537.36');
         curl_setopt($c, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($c, CURLOPT_FOLLOWLOCATION, 1);
-        curl_setopt($c, CURLOPT_AUTOREFERER,    1);
+        curl_setopt($c, CURLOPT_AUTOREFERER, 1);
         curl_setopt($c, CURLOPT_SSL_VERIFYPEER, 0);
 
-        curl_setopt($c, CURLOPT_URL, $url );
+        curl_setopt($c, CURLOPT_URL, $url);
         curl_setopt($c, CURLOPT_REFERER, $url);
         curl_setopt($c, CURLOPT_POST, true);
-        curl_setopt($c, CURLOPT_POSTFIELDS, [
-            "data" => $array
-        ]);
+        curl_setopt($c, CURLOPT_POSTFIELDS, ["data" => $array]);
 
         $result = curl_exec($c);
 
-        if (curl_errno($c)) {
-            $response = json_encode(curl_error($c));
+        if (curl_errno($c))
+        {
+            // $response = json_encode(curl_error($c));
+            $response = 1;
         }
-        else {
+        else
+        {
             $response = json_decode($result);
             $response = $response[0]->count;
         }
         curl_close($c);
 
-      //   print_r($response);
+        //   print_r($response);
         return $response;
     }
 
+    function sortEvents($events, $start, $end)
+    {
+        $sortedEvents = [];
+
+        $start = strtotime($start);
+        $end = strtotime($end);
+
+        $i = 0;
+        foreach ($events as $event)
+        {
+            $i++;
+            $eventDates = $event
+                ->type->handle === 'onlineEvent' ? $event
+                ->eventDatesTimeOnline
+                ->all() : $event
+                ->eventDatesTime
+                ->all();
+            // print_r($eventDates);
+            $eventDays = $this->sortEventDates($eventDates, $start, $end);
+            // use unix date as array key to allow k sorting
+            if (count($eventDays) > 0)
+            {
+                $startDate = 0;
+                if ($eventDays[array_key_last($eventDays) ]->startDateTime != null)
+                {
+                    $startDate = $eventDays[array_key_last($eventDays) ]
+                        ->startDateTime
+                        ->format('U') + $i;
+                }
+
+                $sortedEvents[$startDate] = $event;
+            }
+        }
+
+        krsort($sortedEvents);
+        return array_values($sortedEvents);
+    }
+
+    public function sortEventDates($dates, $start, $end)
+    {
+
+        $eventDays = [];
+        foreach ($dates as $date)
+        {
+            $eventDate = null;
+            if ($date->startDateTime != null)
+            {
+                $eventDate = strtotime($date
+                    ->startDateTime
+                    ->format('Y-m-d'));
+            }
+            if ($start == null)
+            {
+                $eventDays[] = $date;
+            }
+            if (($eventDate >= $start) && ($eventDate < $end))
+            {
+                $eventDays[] = $date;
+            }
+        }
+
+        return $eventDays;
+
+    }
+
 }
+

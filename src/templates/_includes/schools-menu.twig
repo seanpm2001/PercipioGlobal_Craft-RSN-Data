@@ -16,11 +16,11 @@
 {% for school in schools %}
     {%  if school.value == selectedSchools %}
         {%  set activeSchools = 1 %}
-        <div id="schools-btn" class="btn menubtn ml-4" data-icon="users" data-school="{{ school.label }}">{{ school.label }}</div>
+        <div id="schools-btn" class="btn menubtn mr-4" data-icon="users" data-school="{{ school.label }}">{{ school.label }}</div>
     {%  endif %}
 {% endfor %}
 {%  if activeSchools == 0 %}
-    <div id="schools-btn" class="btn menubtn ml-4" data-icon="users">All Schools</div>
+    <div id="schools-btn" class="btn menubtn mr-4" data-icon="users">All Schools</div>
 {%  endif %}
 <div class="menu">
     <ul class="padded">
