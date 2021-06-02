@@ -81,17 +81,19 @@ var chartBuilder = function() {
             type: 'horizontalBar',
             data: {
                 labels: ['Data Entry Completion'],
-                datasets: [{
-                    data: [count],
-                    label: 'Engagement data complete (%) ',
-                    backgroundColor: 'rgb(16, 185, 129)',
-                    borderColor: 'rgb(16, 185, 129)',
-                }, {
-                    data: [totalCount],
-                    label: 'Engagement data incomplete (%) ',
-                    backgroundColor: 'rgb(190, 24, 93)',
-                    borderColor: 'rgb(190, 24, 93)',
-                }]
+                datasets: [
+                    {
+                        data: [count],
+                        label: 'Engagement data complete (%) ',
+                        backgroundColor: 'rgb(16, 185, 129)',
+                        borderColor: 'rgb(16, 185, 129)',
+                    }, {
+                        data: [totalCount],
+                        label: 'Engagement data incomplete (%) ',
+                        backgroundColor: 'rgb(190, 24, 93)',
+                        borderColor: 'rgb(190, 24, 93)',
+                    }
+                ]
             },
             options: {
                 tooltips: defaultTooltips,
@@ -109,34 +111,38 @@ var chartBuilder = function() {
                     display: false
                 },
                 scales: {
-                    xAxes: [{
-                        scaleLabel: {
-                            display: false
-                        },
-                        gridLines: {
-                            display: false,
-                            zeroLineWidth: 0,
-                            zeroLineColor: "#f3f7fc",
-                            drawBorder: false
-                        },
-                        ticks: {
-                            display: false
-                        },
-                        stacked: true
-                    }],
-                    yAxes: [{
-                        maxBarThickness: 64,
-                        gridLines: {
-                            display: false,
-                            zeroLineWidth: 0,
-                            zeroLineColor: "#f3f7fc",
-                            drawBorder: false
-                        },
-                        ticks: {
-                            display: false
-                        },
-                        stacked: true
-                    }]
+                    xAxes: [
+                        {
+                            scaleLabel: {
+                                display: false
+                            },
+                            gridLines: {
+                                display: false,
+                                zeroLineWidth: 0,
+                                zeroLineColor: "#f3f7fc",
+                                drawBorder: false
+                            },
+                            ticks: {
+                                display: false
+                            },
+                            stacked: true
+                        }
+                    ],
+                    yAxes: [
+                        {
+                            maxBarThickness: 64,
+                            gridLines: {
+                                display: false,
+                                zeroLineWidth: 0,
+                                zeroLineColor: "#f3f7fc",
+                                drawBorder: false
+                            },
+                            ticks: {
+                                display: false
+                            },
+                            stacked: true
+                        }
+                    ]
                 },
             }
         });
@@ -165,24 +171,28 @@ var chartBuilder = function() {
                     display: true
                 },
                 scales: {
-                    xAxes: [{
-                        scaleLabel: {
-                            display: false
-                        },
-                        stacked: true
-                    }],
-                    yAxes: [{
-                        maxBarThickness: 64,
-                        gridLines: {
-                            display: false,
-                            zeroLineWidth: 0,
-                            zeroLineColor: "#fff"
-                        },
-                        ticks: {
-                            display: false
-                        },
-                        stacked: true
-                    }]
+                    xAxes: [
+                        {
+                            scaleLabel: {
+                                display: false
+                            },
+                            stacked: true
+                        }
+                    ],
+                    yAxes: [
+                        {
+                            maxBarThickness: 64,
+                            gridLines: {
+                                display: false,
+                                zeroLineWidth: 0,
+                                zeroLineColor: "#fff"
+                            },
+                            ticks: {
+                                display: false
+                            },
+                            stacked: true
+                        }
+                    ]
                 },
             }
         });
@@ -200,12 +210,14 @@ var chartBuilder = function() {
             // The data for our dataset
             data: {
                 labels: labels,
-                datasets: [{
-                    backgroundColor: 'rgb(251, 146, 60)',
-                    borderColor: 'rgb(251, 146, 60)',
-                    data: values,
-                    fill: false
-                }]
+                datasets: [
+                    {
+                        backgroundColor: 'rgb(251, 146, 60)',
+                        borderColor: 'rgb(251, 146, 60)',
+                        data: values,
+                        fill: false
+                    }
+                ]
             },
 
             // Configuration options go here
@@ -218,22 +230,26 @@ var chartBuilder = function() {
                     display: false
                 },
                 scales: {
-                    yAxes: [{
-                        barPercentage: 0.9,
-                        categoryPercentage: 0.9,
-                        ticks: {
-                            beginAtZero: true
-                        },
-                    }],
-                    xAxes: [{
-
-                        scaleLabel: {
-                            display: false
-                        },
-                        ticks: {
-                            beginAtZero: true
+                    yAxes: [
+                        {
+                            barPercentage: 0.9,
+                            categoryPercentage: 0.9,
+                            ticks: {
+                                beginAtZero: true
+                            },
                         }
-                    }],
+                    ],
+                    xAxes: [
+                        {
+
+                            scaleLabel: {
+                                display: false
+                            },
+                            ticks: {
+                                beginAtZero: true
+                            }
+                        }
+                    ],
                 }
             }
         });
@@ -242,6 +258,8 @@ var chartBuilder = function() {
 };
 
 // Initialize and add the map
+var markers = [];
+
 function initMap() {
 
     // The location of RSN
@@ -251,7 +269,7 @@ function initMap() {
 
 
     var map = new google.maps.Map(document.getElementById('engagementMap'), {
-        zoom: 7,
+        zoom: 6,
         center: new google.maps.LatLng(53, -1.7),
         scrollwheel: false,
         streetViewControl: false,
@@ -266,25 +284,64 @@ function initMap() {
     for (var i = 0, length = json.length; i < length; i++) {
         var data = json[i],
             latLng = new google.maps.LatLng(data.latitude, data.longitude);
-        // Creating a marker and putting it on the map
-        var marker = new google.maps.Marker({
-            position: latLng,
-            map: map,
-            title: data.urn
-        });
+        // weed out non location / manual entries
+        if (data.latitude > 0) {
 
-        (function(marker, data) {
+            // Creating a marker and putting it on the map
+            var IsPriority = "No";
+            if (data.priority == '1') {
+                IsPriority = "Yes";
+            }
 
-            // Attaching a click event to the current marker
-            google.maps.event.addListener(marker, "click", function(e) {
-                infoWindow.setContent(data.urn);
-                infoWindow.open(map, marker);
+            var marker = new google.maps.Marker({
+                map: map,
+                phase: data.phase,
+                position: latLng,
+                postcode: data.postcode,
+                priority: IsPriority,
+                region: data.region,
+                street: data.street,
+                town: data.town,
+                title: data.schName,
+                type: data.type,
+                urn: data.urn,
             });
 
 
-        })(marker, data);
+            var contentString = '<h4 class="text-lg leading-tight mb-2"><b>' + marker.title + '</b></h4>' +
+                '<p class="mb-1">Address: <b>' + marker.street + ', ' + marker.town + ', ' + marker.postcode + '</b></p>' +
+                '<p class="mb-1">Region: <b>' + marker.region + '</b></p>' +
+                '<p class="mb-1">Priority School: <b>' + marker.priority + '</b></p>' +
+                '<p class="mb-1">Type: <b>' + marker.type + '</b></p>' +
+                '<p class="mb-1">Phase: <b>' + marker.phase + '</b></p>' +
+                '<p class="mb-1">URN: <b><a href="https://www.compare-school-performance.service.gov.uk/school/' + marker.urn + '/" style="color: #E12D39" target="_blank">' + marker.urn + '</a></b></p>';
 
+            var infowindow = new google.maps.InfoWindow({
+                content: contentString,
+                maxWidth: 360,
+            });
+
+            google.maps.event.addListener(marker, 'click', (function(marker, contentString, infowindow) {
+                return function() {
+                    infowindow.setContent(contentString);
+                    infowindow.open(map, marker);
+                };
+            })(marker, contentString, infowindow));
+
+            markers.push(marker);
+
+        }  // end if no location data
     }
+
+    function AutoCenter() {
+        var bounds = new google.maps.LatLngBounds();
+        $.each(markers, function(index, marker) {
+            bounds.extend(marker.position);
+        });
+        map.fitBounds(bounds, 0)
+    }
+
+    AutoCenter();
 
 
 }

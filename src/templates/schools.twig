@@ -20,6 +20,7 @@
 {%- do view.registerAssetBundle("percipioglobal\\rsndata\\assetbundles\\indexcpsection\\IndexCPSectionAsset") -%}
 
 
+
 {# The title of this CP section #}
 {%- set title = "Schools"|t('rsn-data') -%}
 {%- set selectedNavItem = 'schools' -%}
@@ -59,6 +60,7 @@
     } -%}
     <p class="my-4">Change the map view to display your chosen data set by using the options above.</p>
 
+
     {%- set currentYear = 'now'|date('Y') -%}
     {%- set previousYear = 'now'|date('Y')-1 -%}
     {%- set end = date('now')|atom -%}
@@ -91,20 +93,49 @@
 
     {%- set events = sortEvents(events, start, end) -%}
 
-    {%- set allData = [] -%}
+    {%- set exportData = [] -%}
 
     {%- for event in events -%}
-    
+
+        {%- set network = craft.globalSets()
+            .handle('networkSettings')
+            .siteId(event.siteId)
+            .one()
+        -%}
+        {%- set allData = [] -%}
         {%- set dataEngagement = null -%}
+
+        {% if event.type == 'onlineEvent' %}
+            {% set eventTimetable = event.eventDatesTimeOnline.inReverse().one() %}
+        {% else %}
+            {% set eventTimetable = event.eventDatesTime.inReverse().one() %}
+        {% endif %}
+
+        {% set eventDate = eventTimetable.startDateTime ?? '' %}
+        {% if eventDate %}
+            {% set eventDate = eventTimetable.startDateTime|date('d/n/Y') %}
+        {% endif %}
+
+        {%- set info = {
+
+            'info': {
+                'rsn': network.networkShortName,
+                'event': event.title,
+                'eventid': event.id,
+                'eventdate': eventDate
+            }
+        } -%}
 
         {%- if event.dataEngagement is iterable and (event.dataEngagement.data is not null and event.dataEngagement.data is iterable) -%}
             {%- set dataEngagement = event.dataEngagement.data -%}
             {%- set allData = dataEngagement|merge(allData) -%}
         {%- endif -%}
 
-        {%- if loop.last and allData is not empty -%}
+        {%- set exportData = arrayInsert(info, allData)|merge(exportData) -%}
 
-        {%- set markers = fetchGeo(allData, selectedSchools, metaseedUrl) -%}
+        {%- if loop.last and exportData is not empty -%}
+
+        {%- set markers = fetchGeo(exportData, selectedSchools, metaseedUrl) -%}
 
         <div id="engagementMap"
             class="map-js mt-6"

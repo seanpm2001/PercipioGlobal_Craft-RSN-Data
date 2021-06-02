@@ -57,7 +57,6 @@ class IndexCPSectionAsset extends AssetBundle
             'https://cdn.jsdelivr.net/npm/chart.js@2.8.0',
             'https://maps.googleapis.com/maps/api/js?v=3.42&key='.$googleApiKey,
             'js/Index.js',
-
         ];
 
         $this->css = [
