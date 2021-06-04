@@ -259,13 +259,63 @@ var chartBuilder = function() {
 
 // Initialize and add the map
 var markers = [];
+var heatmapdata = [];
+const gradient = [
+    "rgba(220, 38, 38, 0)",
+    "rgba(220, 38, 38, 1)",
+    "rgba(249, 115, 2, 1)",
+    "rgba(6, 182, 212, 1)",
+];
 
 function initMap() {
 
     // The location of RSN
     var mapContainer = $('#engagementMap'),
-        json = JSON.parse(mapContainer.attr('data-markers'));
-    console.log(json);
+        iconBase = $('#engagementMap').attr('data-iconbase'),
+        json = JSON.parse(mapContainer.attr('data-markers')),
+        form = $('#rsn-data-map'),
+        fieldLevel = $('#map-level'),
+        fieldPriority = $('#map-priority'),
+        fieldHeat = $('#map-heat-field').find('.lightswitch'),
+        showSchools = 0;
+    showLevels = 0;
+
+    //  console.log(json);
+
+    fieldLevel.on('change', function() {
+        showLevels = this.value;
+    });
+
+    fieldPriority.on('change', function() {
+        showSchools = this.value;
+    });
+
+    form.change(function(e) {
+
+        // console.log(showSchools);
+        if (fieldHeat.hasClass('on')) {
+            toggleHeatmap(true);
+            toggleMarkers(false);
+        } else {
+            toggleHeatmap(false);
+            toggleMarkers(true);
+        }
+
+        toggleMarkers(showLevels, showSchools);
+
+    });
+
+    var icons = {
+        engaged: {
+            icon: iconBase + 'marker-red'
+        },
+        sustained: {
+            icon: iconBase + 'marker-highOrange.png'
+        },
+        embedded: {
+            icon: iconBase + 'marker-blueAlt.png'
+        }
+    };
 
 
     var map = new google.maps.Map(document.getElementById('engagementMap'), {
@@ -293,8 +343,30 @@ function initMap() {
                 IsPriority = "Yes";
             }
 
+            if (data.daysAttended == 1) {
+                iconFile = iconBase + 'marker-red.png';
+                level = 'Engaged';
+            }
+            if (data.daysAttended == 2) {
+                iconFile = iconBase + 'marker-highOrange.png';
+                level = 'Sustained';
+            }
+            if (data.daysAttended > 2) {
+                iconFile = iconBase + 'marker-blueAlt.png';
+                level = 'Embedded';
+            }
+
+            var icon = {
+                url: iconFile,
+                scaledSize: new google.maps.Size(30, 45),
+                origin: new google.maps.Point(0, 0),
+                anchor: new google.maps.Point(15, 45)
+            };
+
             var marker = new google.maps.Marker({
                 map: map,
+                icon: icon,
+                engagement: data.daysAttended,
                 phase: data.phase,
                 position: latLng,
                 postcode: data.postcode,
@@ -305,16 +377,30 @@ function initMap() {
                 title: data.schName,
                 type: data.type,
                 urn: data.urn,
+                rsn: data.rsn,
+                la: data.la,
+                pup: data.pup,
+                ppPerc: data.ppPerc,
+                visible: true
             });
 
 
             var contentString = '<h4 class="text-lg leading-tight mb-2"><b>' + marker.title + '</b></h4>' +
                 '<p class="mb-1">Address: <b>' + marker.street + ', ' + marker.town + ', ' + marker.postcode + '</b></p>' +
+                '<p class="mb-1">Local Authority: <b>' + marker.la + '</b></p>' +
                 '<p class="mb-1">Region: <b>' + marker.region + '</b></p>' +
-                '<p class="mb-1">Priority School: <b>' + marker.priority + '</b></p>' +
-                '<p class="mb-1">Type: <b>' + marker.type + '</b></p>' +
+                '<hr class="my-2">' +
+                '<p class="mb-1">Total Pupils: <b>' + marker.pup + '</b></p>' +
+                '<p class="mb-1">Pupil Premium: <b>' + marker.ppPerc + '%</b></p>' +
+                '<hr class="my-2">' +
+                '<p class="mb-1">URN: <b><a href="https://www.compare-school-performance.service.gov.uk/school/' + marker.urn + '/" style="color: #E12D39" target="_blank">' + marker.urn + '</a></b></p>' +
                 '<p class="mb-1">Phase: <b>' + marker.phase + '</b></p>' +
-                '<p class="mb-1">URN: <b><a href="https://www.compare-school-performance.service.gov.uk/school/' + marker.urn + '/" style="color: #E12D39" target="_blank">' + marker.urn + '</a></b></p>';
+                '<p class="mb-1">Type: <b>' + marker.type + '</b></p>' +
+                '<p class="mb-1">Priority School: <b>' + marker.priority + '</b></p>' +
+                '<hr class="my-2">' +
+                '<p class="mb-1">Training with: <b>' + marker.rsn + '</b></p>' +
+                '<p class="mb-1">Engagement Level: <b>' + level + ' (' + marker.engagement + ')</b></p>';
+
 
             var infowindow = new google.maps.InfoWindow({
                 content: contentString,
@@ -328,10 +414,22 @@ function initMap() {
                 };
             })(marker, contentString, infowindow));
 
+            heatmapdata.push({
+                location: latLng,
+                weight: marker.engagement,
+            });
+
             markers.push(marker);
 
         }  // end if no location data
     }
+
+    heatmap = new google.maps.visualization.HeatmapLayer({
+        data: heatmapdata,
+        radius: 0.1,
+        gradient: gradient,
+        dissipating: false
+    });
 
     function AutoCenter() {
         var bounds = new google.maps.LatLngBounds();
@@ -342,6 +440,47 @@ function initMap() {
     }
 
     AutoCenter();
+
+    function toggleHeatmap(opt) {
+        heatmap.setMap(opt ? map : null)
+    }
+
+    function toggleMarkers(showLevels, showSchools) {
+
+        console.log(showLevels);
+        $.each(markers, function(index, marker) {
+            markers[index].setVisible(true);
+            //  markers[index].setVisible(false);
+            var level = marker['engagement'],
+                priority = marker['priority'];
+
+            if (showSchools == 0) {
+                markers[index].setVisible(true);
+            }
+
+            if (showSchools == 1 && priority != 'Yes') {
+                markers[index].setVisible(false);
+            }
+
+            if (showSchools == 2 && priority != 'No') {
+                markers[index].setVisible(false);
+            }
+
+            if (showLevels == 1 && level != 1) {
+                markers[index].setVisible(false);
+            } else if (showLevels == 2 && level != 2) {
+                markers[index].setVisible(false);
+            } else if (showLevels == 3 && level < 3) {
+                markers[index].setVisible(false);
+            }
+
+            if(showSchools == 3){
+                markers[index].setVisible(false);
+            }
+
+        });
+
+    }
 
 
 }

@@ -16,8 +16,8 @@
 
 {%- import "_includes/forms" as forms -%}
 
-{%- do view.registerAssetBundle("percipioglobal\\rsndata\\assetbundles\\rsndata\\RsnDataAsset") -%}
 {%- do view.registerAssetBundle("percipioglobal\\rsndata\\assetbundles\\indexcpsection\\IndexCPSectionAsset") -%}
+{%- set baseAssetsUrl = view.getAssetManager().getPublishedUrl('@percipioglobal/rsndata/assetbundles/indexcpsection/dist/img', true) -%}
 
 
 
@@ -35,50 +35,74 @@
 {# any header buttons #}
 {%- block actionButton -%}
 
-        {%- include "rsn-data/_includes/sites-menu.twig" with {
-            baseUrl: '/cp/rsn-data/' ~ selectedNavItem,
-            currentSiteId: currentSite.id,
-            currentSiteHandle: currentSite.handle,
-            currentSiteName:  currentSite.name
-        } -%}
+    {%- include "rsn-data/_includes/sites-menu.twig" with {
+        baseUrl: '/cp/rsn-data/' ~ selectedNavItem,
+        currentSiteId: currentSite.id,
+        currentSiteHandle: currentSite.handle,
+        currentSiteName:  currentSite.name
+    } -%}
 
 {%- endblock -%}
 
 
 {%- set content -%}
 
-    {%- include "rsn-data/_includes/schools-menu.twig" with {
-        baseUrl: '/cp/rsn-data/' ~ selectedNavItem,
-        selectedTime: selectedSchools,
-        selectedSchools: selectedSchools
-    } -%}
-    
-    {%- include "rsn-data/_includes/time-menu.twig" with {
-        baseUrl: '/cp/rsn-data/' ~ selectedNavItem,
-        selectedTime: selectedTime,
-        selectedSchools: selectedSchools
-    } -%}
     <p class="my-4">Change the map view to display your chosen data set by using the options above.</p>
-
+    <form id="rsn-data-map" class="grid grid-cols-12">
+        <div class="col-span-12 lg:col-span-4">
+            {{ forms.selectField({
+                id: 'map-level',
+                label: 'Engagement Level',
+                instructions: 'Select the engagement level to show',
+                options: {
+                    0: 'All Levels',
+                    1: 'Engaged',
+                    2: 'Sustained',
+                    3: 'Embedded',
+                },
+            }) }}
+        </div>
+        <div class="col-span-12 lg:col-span-4">
+            {{ forms.selectField({
+                id: 'map-priority',
+                label: 'Markers',
+                instructions: 'Toggle marker display',
+                options: {
+                    0: 'All Schools',
+                    1: 'Priority',
+                    2: 'Non Priority',
+                    3: 'Hide Markers',
+                },
+            }) }}
+        </div>
+        <div class="col-span-12 lg:col-span-4">
+            {{ forms.lightswitchField({
+                id: 'map-heat',
+                label: 'Toggle heat map',
+                instructions: 'Show engagement level heatmap',
+                on: false,
+            }) }}
+        </div>
+    </form>
 
     {%- set currentYear = 'now'|date('Y') -%}
     {%- set previousYear = 'now'|date('Y')-1 -%}
     {%- set end = date('now')|atom -%}
 
     {%- switch selectedTime -%}
-        {%- case '1' -%}
-            {%- set start = date('january 01 2019')|atom -%}
-        {%- case '6' -%}
-            {%- set start = date('-6 months')|atom -%}
-        {%- case '12' -%}
-            {%- set start = date('-12 months')|atom -%}
-        {%- case currentYear -%}
-            {%- set start = date('this year january 01')|atom -%}
-        {%- case previousYear -%}
-            {%- set start = date('last year january 01')|atom -%}
-            {%- set end = date('last year december 31')|atom -%}
-        {%- default -%}
-            {%- set start = date('-6 months')|atom -%}
+    {%- case '1' -%}
+        {%- set start = date('january 01 2019')|atom -%}
+    {%- case '6' -%}
+        {%- set start = date('-6 months')|atom -%}
+    {%- case '12' -%}
+        {%- set start = date('-12 months')|atom -%}
+    {%- case currentYear -%}
+        {%- set start = date('this year january 01')|atom -%}
+    {%- case previousYear -%}
+        {%- set start = date('last year january 01')|atom -%}
+        {%- set end = date('last year december 31')|atom -%}
+    {%- default -%}
+        {%- set start = date('-6 months')|atom -%}
     {%- endswitch -%}
 
     {%- if eventSite == 'main' -%}
@@ -88,8 +112,7 @@
     {%- set events = craft.entries.section('events')
         .site(eventSite)
         .anyStatus()
-        .all()
-    -%}
+        .all() -%}
 
     {%- set events = sortEvents(events, start, end) -%}
 
@@ -100,8 +123,7 @@
         {%- set network = craft.globalSets()
             .handle('networkSettings')
             .siteId(event.siteId)
-            .one()
-        -%}
+            .one() -%}
         {%- set allData = [] -%}
         {%- set dataEngagement = null -%}
 
@@ -135,13 +157,13 @@
 
         {%- if loop.last and exportData is not empty -%}
 
-        {%- set markers = fetchGeo(exportData, selectedSchools, metaseedUrl) -%}
+            {%- set markers = fetchGeo(exportData, selectedSchools, metaseedUrl) -%}
 
-        <div id="engagementMap"
-            class="map-js mt-6"
-            data-iconbase=""
-            data-markers="{{ markers }}"
-        ></div>
+            <div id="engagementMap"
+                 class="map-js mt-6"
+                 data-iconbase="{{ baseAssetsUrl }}/"
+                 data-markers="{{ markers }}"
+            ></div>
 
         {%- endif -%}
 
@@ -161,22 +183,22 @@
             </div>
         {%- endif -%}
 
-{%- endfor -%}
+    {%- endfor -%}
 
-{%- if events|length == 0 -%}
-    <div class="widget inline-flex p-1 w-full">
-        <div class="front w-full">
-            <div class="pane">
-                <div class="widget-heading">
-                    <h2 class="text-lg font-bold">No school data found</h2>
-                    <h6 class="text-xs uppercase" data-time-set>Last 12 months</h6>
-                    <div class="body mt-4">
-                        <p>No engagement data has been found for this Research School.</p>
+    {%- if events|length == 0 -%}
+        <div class="widget inline-flex p-1 w-full">
+            <div class="front w-full">
+                <div class="pane">
+                    <div class="widget-heading">
+                        <h2 class="text-lg font-bold">No school data found</h2>
+                        <h6 class="text-xs uppercase" data-time-set>Last 12 months</h6>
+                        <div class="body mt-4">
+                            <p>No engagement data has been found for this Research School.</p>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-{%- endif -%}
+    {%- endif -%}
 
 {%- endset -%}
