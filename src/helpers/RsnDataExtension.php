@@ -268,13 +268,10 @@ class RsnDataExtension extends AbstractExtension
     {
 
         $response = null;
-        $array = array_merge($array);
-        $array = array_unique(array_column($array, 'schooldata'));
-        $array = array_filter($array, 'is_numeric');
-
         $url = $api . '/geoFromUrns';
         $array = json_encode($array);
 
+      //  print_r($array);
         $c = curl_init();
 
         curl_setopt($c, CURLOPT_USERAGENT, 'Mozilla/5.0 (Macintosh; Intel Mac OS X 11_1_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.150 Safari/537.36');

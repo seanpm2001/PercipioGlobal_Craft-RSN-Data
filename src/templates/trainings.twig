@@ -118,7 +118,7 @@
             </td>
             
             <td data-titleType>
-                {% set categoryName = event.eventCategories.one().title ??? '' %}
+                {% set categoryName = event.eventCategories.one().title ?? null %}
                 <span>{{- categoryName -}}</span>
             </td>
             <td data-title="date" data-attr="date"> 

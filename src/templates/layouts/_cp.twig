@@ -13,13 +13,13 @@
 {% set navItems = {
     dashboard: { label: "Dashboard"|t('rsnData'), url: pluginCpUrl~'?site='~selectedSite },
     trainings: { label: "Trainings"|t('rsnData'), url: url('rsn-data/trainings/?site='~selectedSite) },
-    schools: { label: "Schools"|t('rsnData'), url: url('rsn-data/schools/?site='~selectedSite) },
-    export: { label: "Export"|t('rsnData'), url: url('rsn-data/export/?site='~selectedSite) },
+    schools: { label: "Schools Map"|t('rsnData'), url: url('rsn-data/schools/?site='~selectedSite) },
+    export: { label: "Data Export"|t('rsnData'), url: url('rsn-data/export/?site='~selectedSite) },
 } %}
 
 {% if currentUser.can('rsndataAccessBeta') %}
     {%  set betaNav = {
-        beta: { label: "Beta"|t('rsnData'), url: url('rsn-data/beta/?site='~selectedSite) },
+        beta: { label: "Beta Features"|t('rsnData'), url: url('rsn-data/beta/?site='~selectedSite) },
     } %}
     {% set navItems = navItems|merge(betaNav) %}
 {% endif %}
