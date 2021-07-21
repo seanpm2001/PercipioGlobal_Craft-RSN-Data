@@ -25,77 +25,80 @@
 {%- set selectedNavItem = 'dashboard' -%}
 {%- set metaseedUrl = craft.app.plugins.getPlugin('rsn-data').settings.metaseedUrl -%}
 {%- set selectedSite = craft.app.request.getQueryParam('site')|default('main') -%}
-{%- set selectedTime = craft.app.request.getQueryParam('time')|default('6') -%}
+{%- set selectedTime = craft.app.request.getQueryParam('time')|default('3') -%}
 {%- set selectedSchools = craft.app.request.getQueryParam('p')|default('0') -%}
 {%- set monthCount = selectedTime -%}
 {%- set eventSite = selectedSite -%}
 {%- set uri = craft.app.request.fullPath() -%}
 
-{# any header buttons #}
-{%- block actionButton -%}
-
-        {%- include "rsn-data/_includes/sites-menu.twig" with {
-            baseUrl: '/cp/rsn-data/',
-            currentSiteId: currentSite.id,
-            currentSiteHandle: currentSite.handle,
-            currentSiteName:  currentSite.name
-        } -%}
-
-{%- endblock -%}
-
-{%- set content -%}
-
-    {%- set currentYear = 'now'|date('Y') -%}
-    {%- set previousYear = 'now'|date('Y')-1 -%}
-    {%- set end = date('now')|atom -%}
+ {%- set end = date('now')|atom -%}
 
     {%- switch selectedTime -%}
-        {%- case '1' -%}
-            {%- set start = date('january 01 2019')|atom -%}
-            {%- set monthCount = '24' -%}
-        {%- case '6' -%}
-            {%- set start = date('-6 months')|atom -%}
-        {%- case '12' -%}
-            {%- set start = date('-12 months')|atom -%}
-        {%- case currentYear -%}
-            {%- set start = date('this year january 01')|atom -%}
-            {%- set monthCount = 'now'|date('n') -%}
-        {%- case previousYear -%}
-            {%- set start = date('last year january 01')|atom -%}
-            {%- set end = date('last year december 31')|atom -%}
-            {%- set monthCount = '12' -%}
-        {%- default -%}
-            {%- set start = date('-6 months')|atom -%}
+    {%- case '1' -%}
+        {%- set start = date('january 01 2019')|atom -%}
+        {%- set monthCount = '30' -%}
+    {%- case '3' -%}
+        {%- set start = date('-3 months')|atom -%}
+    {%- case '6' -%}
+        {%- set start = date('-6 months')|atom -%}
+    {%- case '12' -%}
+        {%- set start = date('-12 months')|atom -%}
+    {%- case '2022' -%}
+        {%- set start = date('01 september 2021')|atom -%}
+        {%- set end = date('31 july 2022')|atom -%}
+        {%- set monthCount = '10' -%}
+    {%- case '2021' -%}
+        {%- set start = date('01 september 2020')|atom -%}
+        {%- set end = date('31 july 2021')|atom -%}
+        {%- set monthCount = '10' -%}
+    {%- case '2020' -%}
+        {%- set start = date('01 september 2019')|atom -%}
+        {%- set end = date('31 july 2020')|atom -%}
+        {%- set monthCount = '10' -%}
+    {%- default -%}
+        {%- set start = date('-3 months')|atom -%}
     {%- endswitch -%}
 
     {%- if eventSite == 'main' -%}
         {%- set eventSite = '*' -%}
     {%- endif -%}
 
+{# any header buttons #}
+{%- block actionButton -%}
+
+    {%- include "rsn-data/_includes/sites-menu.twig" with {
+        baseUrl: '/cp/rsn-data/',
+        currentSiteId: currentSite.id,
+        currentSiteHandle: currentSite.handle,
+        currentSiteName:  currentSite.name
+    } -%}
+
     {%- include "rsn-data/_includes/time-menu.twig" with {
         baseUrl: '/cp/rsn-data/',
         selectedTime: selectedTime,
         selectedSchools: selectedSchools
     } -%}
-    <p class="my-4 tracking-tight"> Showing data from <b>{{ start|date('F, d Y ') }}</b> to <b>{{ end|date('F, d Y ') }}</b></p>
 
+{%- endblock -%}
 
+{%- set content -%}
+
+    <p class="my-4 tracking-tight"> Showing data from <b>{{ start|date('d F, Y ') }}</b> to <b>{{ end|date('d F, Y ') }}</b></p>
 
     <div class="relative flex flex-row justify-between flex-wrap">
-    {%- set events = craft.entries.section('events')
-        .site(eventSite)
-        .anyStatus()
-        .all()
-    -%}
+{%- set events = craft.entries.section('events')
+    .site(eventSite)
+    .anyStatus()
+    .all() -%}
 
-    {%- set events = sortEvents(events, start, end) -%}
+{%- set events = sortEvents(events, start, end) -%}
 
-    {%- set allData = [] -%}
-    {%- set allSupport = [] -%}
-    {%- set count = 0 -%}
+{%- set allData = [] -%}
+{%- set allSupport = [] -%}
+{%- set count = 0 -%}
 
     {%- for event in events -%}
-    
+
         {%- set dataEngagement = null -%}
         {%- set dataEnganged = 0 -%}
         {%- set dataSustained = 0 -%}
@@ -111,106 +114,114 @@
             {%- set supportEngagement = event.dataEngagement.support -%}
             {%- set allSupport = supportEngagement|merge(allSupport) -%}
         {%- endif -%}
-        
+
         {% cache unless currentUser %}
-        {%- if loop.last and allData is not empty -%}
+            {%- if loop.last and allData is not empty -%}
 
-            {%- set totalSchools = totalSchools(allData) -%}
-            {%- set avgSchools = avgSchools(allData, count) -%}
-            {%- set totalPrioritySchools = fetchPriority(allData, metaseedUrl) -%}
-            {%- set totalAttendees = totalAttendees(allData) -%}
-            {%- set avgAttendees = avgAttendees(allData, count) -%}
-            {%- set totalDays = totalDays(allData) -%}
-            {%- set totalEngaged = totalEngaged(allData) -%}
-            {%- set totalSustained = totalSustained(allData) -%}
-            {%- set totalEmbedded = totalEmbedded(allData) -%}
+                {%- set totalSchools = totalSchools(allData) -%}
+                {%- set avgSchools = avgSchools(allData, count) -%}
+                {%- set totalPrioritySchools = fetchPriority(allData, metaseedUrl) -%}
+                {%- set totalAttendees = totalAttendees(allData) -%}
+                {%- set avgAttendees = avgAttendees(allData, count) -%}
+                {%- set totalDays = totalDays(allData) -%}
 
-            <div class="widget inline-flex p-1 w-full md:w-1/2 xl:w-1/4">
-                <div class="front w-full">
-                    <div class="pane h-auto l:h-72 xl:h-auto">
-                        <div class="widget-heading">
-                            <h2 class="text-lg font-bold leading-5 mb-1">Total events</h2>
-                            <h6 class="text-xs uppercase" data-time-set>Last 12 months</h6>
-                            <div class="body">
+                {%- set totalEngaged = engagementLevel(allData, 1) -%}
+                {%- set totalSustained = engagementLevel(allData, 2) -%}
+                {%- set totalEmbedded = engagementLevel(allData, 3) -%}
+
+
+                <div class="widget inline-flex p-1 w-full md:w-1/2 xl:w-1/4">
+                    <div class="front w-full">
+                        <div class="pane h-auto l:h-72 xl:h-auto">
+                            <div class="widget-heading">
+                                <h2 class="text-lg font-bold leading-5 mb-1">Total events</h2>
+                                <h6 class="text-xs uppercase" data-time-set>Last 12 months</h6>
+                                <div class="body">
                                 <span class="text-5xl text-center block my-6 tracking-tight font-semibold">
                                     {{ count|number_format }}</span>
-                                <p class="text-center text-sm">Avg. <b>{{ (count/monthCount)|number_format }}</b> trainings per month.</p>
+                                    <p class="text-center text-sm">Avg. <b>{{ (count/monthCount)|number_format }}</b>
+                                        trainings per month.</p>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            
-            <div class="widget inline-flex p-1 w-full md:w-1/2 xl:w-1/4">
-                <div class="front w-full">
-                    <div class="pane h-auto l:h-72 xl:h-auto">
-                        <div class="widget-heading">
-                            <h2 class="text-lg font-bold leading-5 mb-1">Total attendees</h2>
-                            <h6 class="text-xs uppercase" data-time-set>Last 12 months</h6>
-                            <div class="body">
+
+                <div class="widget inline-flex p-1 w-full md:w-1/2 xl:w-1/4">
+                    <div class="front w-full">
+                        <div class="pane h-auto l:h-72 xl:h-auto">
+                            <div class="widget-heading">
+                                <h2 class="text-lg font-bold leading-5 mb-1">Total attendees</h2>
+                                <h6 class="text-xs uppercase" data-time-set>Last 12 months</h6>
+                                <div class="body">
                                 <span class="text-5xl text-center block my-6 tracking-tight font-semibold">
                                     {{ totalAttendees|number_format }}</span>
-                                <p class="text-center text-sm">Avg. <b>{{ avgAttendees|number_format }}</b> attendees per training.</p>
+                                    <p class="text-center text-sm">Avg. <b>{{ avgAttendees|number_format }}</b>
+                                        attendees per training.</p>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            
-            <div class="widget inline-flex p-1 w-full md:w-1/2 xl:w-1/4">
-                <div class="front w-full">
-                    <div class="pane h-auto l:h-72 xl:h-auto">
-                        <div class="widget-heading">
-                            <h2 class="text-lg font-bold leading-5 mb-1">Total schools</h2>
-                            <h6 class="text-xs uppercase" data-time-set>Last 12 months</h6>
-                            <div class="body">
+
+                <div class="widget inline-flex p-1 w-full md:w-1/2 xl:w-1/4">
+                    <div class="front w-full">
+                        <div class="pane h-auto l:h-72 xl:h-auto">
+                            <div class="widget-heading">
+                                <h2 class="text-lg font-bold leading-5 mb-1">Total schools</h2>
+                                <h6 class="text-xs uppercase" data-time-set>Last 12 months</h6>
+                                <div class="body">
                                 <span class="text-5xl text-center block my-6 tracking-tight font-semibold">
                                     {{ totalSchools|number_format }}
                                 </span>
-                                <p class="text-center text-sm">Avg. <b>{{ avgSchools|number_format }}</b> schools per training.</p>
+                                    <p class="text-center text-sm">Avg. <b>{{ avgSchools|number_format }}</b> schools
+                                        per training.</p>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="widget inline-flex p-1 w-full md:w-1/2 xl:w-1/4">
-                <div class="front w-full">
-                    <div class="pane h-auto l:h-72 xl:h-auto">
-                        <div class="widget-heading">
-                            <h2 class="text-lg font-bold leading-5 mb-1">Total priority schools</h2>
-                            <h6 class="text-xs uppercase" data-time-set>Last 12 months</h6>
-                            <div class="body">
+                <div class="widget inline-flex p-1 w-full md:w-1/2 xl:w-1/4">
+                    <div class="front w-full">
+                        <div class="pane h-auto l:h-72 xl:h-auto">
+                            <div class="widget-heading">
+                                <h2 class="text-lg font-bold leading-5 mb-1">Total priority schools</h2>
+                                <h6 class="text-xs uppercase" data-time-set>Last 12 months</h6>
+                                <div class="body">
                                 <span class="text-5xl text-center block my-6 tracking-tight font-semibold">
                                     {{ totalPrioritySchools|number_format }} 
                                 </span>
-                                <p class="text-center text-sm">Avg. <b>{{ ((totalPrioritySchools / totalSchools) * 100)|number_format }}%</b> priority schools per training.</p>
+                                    <p class="text-center text-sm">Avg.
+                                        <b>{{ ((totalPrioritySchools / totalSchools) * 100)|number_format }}%</b>
+                                        priority schools per training.</p>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="widget inline-flex p-1 w-full">
-                <div class="front w-full">
-                    <div class="pane">
-                        <div class="widget-heading">
-                            <h2 class="text-lg font-bold">Engagement Level</h2>
-                            <h6 class="text-xs uppercase" data-time-set>Last 12 months</h6>
-                            <div class="body h-52 pb-6">
-                                <canvas id="chart-engagementLevel" 
-                                        class="chart-js"
-                                        data-engaged="{{ totalEngaged }}"
-                                        data-sustained="{{ totalSustained }}"
-                                        data-embedded="{{ totalEmbedded }}">
-                                </canvas>
-                                <p class="text-center text-sm">Showing the split of engagement levels across all events in this time period.</p>
+                <div class="widget inline-flex p-1 w-full">
+                    <div class="front w-full">
+                        <div class="pane">
+                            <div class="widget-heading">
+                                <h2 class="text-lg font-bold">Engagement Level</h2>
+                                <h6 class="text-xs uppercase" data-time-set>Last 12 months</h6>
+                                <div class="body h-52 pb-6">
+                                    <canvas id="chart-engagementLevel"
+                                            class="chart-js"
+                                            data-engaged="{{ totalEngaged }}"
+                                            data-sustained="{{ totalSustained }}"
+                                            data-embedded="{{ totalEmbedded }}">
+                                    </canvas>
+                                    <p class="text-center text-sm">Showing the split of engagement levels across all
+                                        events in this time period.</p>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        {%- endif -%}
+            {%- endif -%}
         {% endcache %}
 
         {%- if loop.last and allData|length == '0' -%}
@@ -238,14 +249,15 @@
                             <h2 class="text-lg font-bold">Follow on support offered</h2>
                             <h6 class="text-xs uppercase" data-time-set>Last 12 months</h6>
                             <div class="body relative">
-                                <canvas 
-                                    id="chart-followOnSupport"
-                                    class="chart-js"
-                                    style="max-height: 600px;"
-                                    data-labels="{%- for key in followOnSupportCats|keys -%}{{ key }}{{ not loop.last ? '|' }}{%- endfor -%}"
-                                    data-values="{%- for value in followOnSupportCats -%}{{ value }}{{ not loop.last ? '|' }}{%- endfor -%}">
+                                <canvas
+                                        id="chart-followOnSupport"
+                                        class="chart-js"
+                                        style="max-height: 600px;"
+                                        data-labels="{%- for key in followOnSupportCats|keys -%}{{ key }}{{ not loop.last ? '|' }}{%- endfor -%}"
+                                        data-values="{%- for value in followOnSupportCats -%}{{ value }}{{ not loop.last ? '|' }}{%- endfor -%}">
                                 </canvas>
-                                <p class="text-center text-sm">Showing what types of follow on support have been offered.</p>
+                                <p class="text-center text-sm">Showing what types of follow on support have been
+                                    offered.</p>
                             </div>
                         </div>
                     </div>
@@ -270,20 +282,22 @@
         {%- endif -%}
 
         {%- if loop.last and allData is not empty -%}
-        <div class="widget inline-flex p-1 w-full">
+            <div class="widget inline-flex p-1 w-full">
                 <div class="front w-full">
                     <div class="pane">
                         <div class="widget-heading">
                             <h2 class="text-lg font-bold">Engagement Data Completion</h2>
                             <h6 class="text-xs uppercase" data-time-set>Last 12 months</h6>
                             <div class="body relative">
-                                <canvas id="chart-engagementCompletion" 
+                                <canvas id="chart-engagementCompletion"
                                         class="chart-js"
                                         style="max-height: 140px;"
                                         data-count="{{ (count / loop.index * 100)|number_format(2) }}"
                                         data-total-count="{{ 100-(count / loop.index * 100)|number_format(2) }}">
                                 </canvas>
-                                <p class="text-center text-sm"><b>{{ loop.index }}</b> total training events. <b>{{ count}}</b> (<em>{{ (count / loop.index * 100)|number_format(2) }}%</em>) have engagement data.</p>
+                                <p class="text-center text-sm"><b>{{ loop.index }}</b> total training events.
+                                    <b>{{ count }}</b> (<em>{{ (count / loop.index * 100)|number_format(2) }}%</em>)
+                                    have engagement data.</p>
                             </div>
                         </div>
                     </div>
@@ -291,28 +305,28 @@
             </div>
         {%- endif -%}
 
-{%- endfor -%}
+    {%- endfor -%}
 
-{%- if events|length == 0 -%}
-    <div class="widget inline-flex p-1 w-full">
-        <div class="front w-full">
-            <div class="pane">
-                <div class="widget-heading">
-                    <h2 class="text-lg font-bold">No training events found</h2>
-                    <h6 class="text-xs uppercase" data-time-set>Last 12 months</h6>
-                    <div class="body relative">
-                        <canvas id="chart-engagementCompletion" 
-                                class="chart-js"
-                                style="max-height: 140px;"
-                                data-count="0"
-                                data-total-count="100">
-                        </canvas>
-                        <p class="text-center text-sm"><b>0</b> total training events.</p>
+    {%- if events|length == 0 -%}
+        <div class="widget inline-flex p-1 w-full">
+            <div class="front w-full">
+                <div class="pane">
+                    <div class="widget-heading">
+                        <h2 class="text-lg font-bold">No training events found</h2>
+                        <h6 class="text-xs uppercase" data-time-set>Last 12 months</h6>
+                        <div class="body relative">
+                            <canvas id="chart-engagementCompletion"
+                                    class="chart-js"
+                                    style="max-height: 140px;"
+                                    data-count="0"
+                                    data-total-count="100">
+                            </canvas>
+                            <p class="text-center text-sm"><b>0</b> total training events.</p>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-</div>
-{%- endif -%}
+        </div>
+    {%- endif -%}
 {%- endset -%}

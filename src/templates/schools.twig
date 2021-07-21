@@ -26,11 +26,37 @@
 {%- set selectedNavItem = 'schools' -%}
 {%- set metaseedUrl = craft.app.plugins.getPlugin('rsn-data').settings.metaseedUrl -%}
 {%- set selectedSite = craft.app.request.getQueryParam('site')|default('main') -%}
-{%- set selectedTime = craft.app.request.getQueryParam('time')|default('6') -%}
+{%- set selectedTime = craft.app.request.getQueryParam('time')|default('3') -%}
 {%- set selectedSchools = craft.app.request.getQueryParam('p')|default('0') -%}
 {%- set eventSite = selectedSite -%}
 {%- set markers = null -%}
 {%- set uri = craft.app.request.fullPath() -%}
+
+ {%- set end = date('now')|atom -%}
+
+    {%- switch selectedTime -%}
+        {%- case '1' -%}
+            {%- set start = date('january 01 2019')|atom -%}
+            {%- set monthCount = '24' -%}
+        {%- case '3' -%}
+            {%- set start = date('-3 months')|atom -%}
+        {%- case '6' -%}
+            {%- set start = date('-6 months')|atom -%}
+        {%- case '12' -%}
+            {%- set start = date('-12 months')|atom -%}
+        {%- case '2022' -%}
+            {%- set start = date('01 september 2021')|atom -%}
+            {%- set end = date('31 july 2022')|atom -%}
+        {%- case '2021' -%}
+            {%- set start = date('01 september 2020')|atom -%}
+            {%- set end = date('31 july 2021')|atom -%}
+        {%- case '2020' -%}
+            {%- set start = date('01 september 2019')|atom -%}
+            {%- set end = date('31 july 2020')|atom -%}
+        {%- default -%}
+            {%- set start = date('-3 months')|atom -%}
+    {%- endswitch -%}
+
 
 {# any header buttons #}
 {%- block actionButton -%}
@@ -42,11 +68,18 @@
         currentSiteName:  currentSite.name
     } -%}
 
+    {%- include "rsn-data/_includes/time-menu.twig" with {
+        baseUrl: '/cp/rsn-data/' ~ selectedNavItem,
+        selectedTime: selectedTime,
+        selectedSchools: selectedSchools
+    } -%}
+
+
 {%- endblock -%}
 
 
 {%- set content -%}
-
+ <p class="my-4 tracking-tight"> Showing data from <b>{{ start|date('d F, Y ') }}</b> to <b>{{ end|date('d F, Y ') }}</b></p>
     <p class="my-4">Change the map view to display your chosen data set by using the options above.</p>
     <form id="rsn-data-map" class="grid grid-cols-12">
         <div class="col-span-12 lg:col-span-4">
@@ -85,25 +118,6 @@
         </div>
     </form>
 
-    {%- set currentYear = 'now'|date('Y') -%}
-    {%- set previousYear = 'now'|date('Y')-1 -%}
-    {%- set end = date('now')|atom -%}
-
-    {%- switch selectedTime -%}
-    {%- case '1' -%}
-        {%- set start = date('january 01 2019')|atom -%}
-    {%- case '6' -%}
-        {%- set start = date('-6 months')|atom -%}
-    {%- case '12' -%}
-        {%- set start = date('-12 months')|atom -%}
-    {%- case currentYear -%}
-        {%- set start = date('this year january 01')|atom -%}
-    {%- case previousYear -%}
-        {%- set start = date('last year january 01')|atom -%}
-        {%- set end = date('last year december 31')|atom -%}
-    {%- default -%}
-        {%- set start = date('-6 months')|atom -%}
-    {%- endswitch -%}
 
     {%- if eventSite == 'main' -%}
         {%- set eventSite = '*' -%}

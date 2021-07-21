@@ -2,7 +2,7 @@
     "name": "percipioglobal/craft-rsn-data",
     "description": "RSN Data Engagement plugin for the Research Schools Network",
     "type": "craft-plugin",
-    "version": "1.1.9",
+    "version": "1.2.0",
     "keywords": [],
     "support": {
         "docs": "https://github.com/percipioglobal/craft-rsn-data",

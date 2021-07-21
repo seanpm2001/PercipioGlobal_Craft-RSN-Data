@@ -24,7 +24,7 @@
 {%- set selectedNavItem = 'export' -%}
 {%- set metaseedUrl = craft.app.plugins.getPlugin('rsn-data').settings.metaseedUrl -%}
 {%- set selectedSite = craft.app.request.getQueryParam('site')|default('main') -%}
-{%- set selectedTime = craft.app.request.getQueryParam('time')|default('6') -%}
+{%- set selectedTime = craft.app.request.getQueryParam('time')|default('3') -%}
 {%- set selectedSchools = craft.app.request.getQueryParam('p')|default('0') -%}
 {%- set eventSite = selectedSite -%}
 {%- set uri = craft.app.request.fullPath() -%}
@@ -43,25 +43,36 @@
 
 
 {%- set content -%}
-    {%- set currentYear = 'now'|date('Y') -%}
-    {%- set previousYear = 'now'|date('Y')-1 -%}
+
+
     {%- set end = date('now')|atom -%}
 
     {%- switch selectedTime -%}
         {%- case '1' -%}
             {%- set start = date('january 01 2019')|atom -%}
+            {%- set monthCount = '24' -%}
+        {%- case '3' -%}
+            {%- set start = date('-3 months')|atom -%}
         {%- case '6' -%}
             {%- set start = date('-6 months')|atom -%}
         {%- case '12' -%}
             {%- set start = date('-12 months')|atom -%}
-        {%- case currentYear -%}
-            {%- set start = date('this year january 01')|atom -%}
-        {%- case previousYear -%}
-            {%- set start = date('last year january 01')|atom -%}
-            {%- set end = date('last year december 31')|atom -%}
+        {%- case '2022' -%}
+            {%- set start = date('01 september 2021')|atom -%}
+            {%- set end = date('31 july 2022')|atom -%}
+            {%- set monthCount = '10' -%}
+        {%- case '2021' -%}
+            {%- set start = date('01 september 2020')|atom -%}
+            {%- set end = date('31 july 2021')|atom -%}
+            {%- set monthCount = '10' -%}
+        {%- case '2020' -%}
+            {%- set start = date('01 september 2019')|atom -%}
+            {%- set end = date('31 july 2020')|atom -%}
+            {%- set monthCount = '10' -%}
         {%- default -%}
-            {%- set start = date('-6 months')|atom -%}
+            {%- set start = date('-3 months')|atom -%}
     {%- endswitch -%}
+
 
     {%- if eventSite == 'main' -%}
         {%- set eventSite = '*' -%}
@@ -142,7 +153,7 @@
 
             {%- set exportStatus = selectedSchools == 1 ? 'disabled' : null -%}
 
-            <div class="select mr-4">
+            <div class="select ml-4">
                 <select name="type">
                     <option value="attendee" {{ exportStatus }}>Attendee data</option>
                     <option value="eventref" {{ exportStatus }}>Event ID reference table</option>
@@ -151,7 +162,7 @@
                     <option value="schoolGrouped">School data (per school)</option>
                 </select>
             </div>
-            <button class="mt-2 btn submit" type="submit" data-icon="download"> Export</button>
+            <button class="ml-4 mt-2 btn submit" type="submit" data-icon="download"> Export</button>
         </form>
         {% endcache %}
         <p class="my-4">Use the options above to export your chosen data set.</p>

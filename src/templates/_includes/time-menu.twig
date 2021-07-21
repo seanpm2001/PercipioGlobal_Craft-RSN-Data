@@ -1,13 +1,22 @@
 {% import "_includes/forms" as forms %}
+
 {% set activeTime = 0 %}
 {% set times = [
     {
-        'value': "now"|date("Y"),
-        'label': 'Current Year (' ~ "now"|date("Y") ~')'
+        'value': '2022',
+        'label': 'Academic Year (2021/22)'
     },
     {
-        'value': ("now"|date("Y") - 1),
-        'label': 'Previous Year (' ~ ("now"|date("Y") - 1) ~')'
+        'value': '2021',
+        'label': 'Academic Year (2020/21)'
+    },
+    {
+        'value': '2020',
+        'label': 'Academic Year (2019/20)'
+    },
+    {
+        'value': '3',
+        'label': 'Last 3 months'
     },
     {
         'value': '6',
@@ -28,11 +37,11 @@
 {% for time in times %}
     {%  if time.value == selectedTime %}
         {%  set activeTime = 1 %}
-        <div id="time-btn" class="btn menubtn mr-4" data-icon="time" data-time="{{ time.label }}">{{ time.label }}</div>
+        <div id="time-btn" class="btn menubtn ml-4" data-icon="time" data-time="{{ time.label }}">{{ time.label }}</div>
     {%  endif %}
 {% endfor %}
 {%  if activeTime == 0 %}
-    <div id="time-btn" class="btn menubtn  mr-4" data-icon="time">Last 6 months</div>
+    <div id="time-btn" class="btn menubtn  ml-4" data-icon="time">Last 6 months</div>
 {%  endif %}
 <div class="menu">
     <ul class="padded">
@@ -45,4 +54,5 @@
         </li>
         {% endfor %}
     </ul>
+
 </div>
