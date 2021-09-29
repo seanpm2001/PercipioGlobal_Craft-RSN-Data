@@ -354,12 +354,14 @@ class RsnDataExtension extends AbstractExtension
         foreach ($events as $event)
         {
             $i++;
-            $eventDates = $event
-                ->type->handle === 'onlineEvent' ? $event
-                ->eventDatesTimeOnline
-                ->all() : $event
-                ->eventDatesTime
-                ->all();
+
+            if($event->type->handle === 'onlineEvent'){
+                $eventDates = $event->eventDatesTimeOnline->all();
+            } elseif($event->type->handle === 'locationEvent') {
+                $eventDates = $event->eventDatesTime->all();
+            } else {
+                $eventDates = $event->eventHybridDatesTime->all();
+            }
             // print_r($eventDates);
             $eventDays = $this->sortEventDates($eventDates, $start, $end);
             // use unix date as array key to allow k sorting
