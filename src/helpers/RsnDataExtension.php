@@ -354,7 +354,6 @@ class RsnDataExtension extends AbstractExtension
         foreach ($events as $event)
         {
             $i++;
-
             if($event->type->handle === 'onlineEvent'){
                 $eventDates = $event->eventDatesTimeOnline->all();
             } elseif($event->type->handle === 'locationEvent') {
