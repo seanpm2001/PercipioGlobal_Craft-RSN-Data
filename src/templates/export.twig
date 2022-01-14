@@ -100,10 +100,13 @@
         {%- set allData = [] -%}
         {%- set dataEngagement = null -%}
 
+
         {% if event.type == 'onlineEvent' %}
-            {% set eventTimetable = event.eventDatesTimeOnline.inReverse().one() %}
+            {% set eventTimetable = event.eventDatesTimeOnline.inReverse().one() ?? '' %}
+        {% elseif event.type == 'in-person' %}
+            {% set eventTimetable = event.eventDatesTime.inReverse().one() ?? '' %}
         {% else %}
-            {% set eventTimetable = event.eventDatesTime.inReverse().one() %}
+            {% set eventTimetable = event.eventHybridDatesTime.inReverse().one() ?? '' %}
         {% endif %}
         
         {% set eventDate = eventTimetable.startDateTime ?? '' %}
